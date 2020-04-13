@@ -24,7 +24,7 @@ export default class Survey extends Component<{
     ) : (
       <View>
         {/* <Header title="Acceuil" /> */}
-        <Text>Welcome screen</Text>
+        <Text>Survey screen</Text>
       </View>
     );
   }

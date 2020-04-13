@@ -24,7 +24,7 @@ export default class Settings extends Component<{
     ) : (
       <View>
         {/* <Header title="Acceuil" /> */}
-        <Text>Welcome screen</Text>
+        <Text>Settings screen</Text>
       </View>
     );
   }

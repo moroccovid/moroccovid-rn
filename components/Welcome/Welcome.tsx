@@ -10,7 +10,6 @@ import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Icon} from 'react-native-vector-icons/Icon';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -45,14 +44,18 @@ export default class Welcome extends Component<{
           <View style={{flex: 44, width: '100%'}}>
             <View style={styles.menu}>
               <View style={styles.col}>
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('Tracking')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/map.png')}
                   />
                   <Text style={styles.menuText}>Tracking</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('Terms')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/privacy.png')}
@@ -62,7 +65,9 @@ export default class Welcome extends Component<{
               </View>
 
               <View style={styles.col}>
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('History')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/itinerary.png')}
@@ -70,7 +75,9 @@ export default class Welcome extends Component<{
                   <Text style={styles.menuText}>Trajets</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('Settings')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/gear.png')}
@@ -80,14 +87,18 @@ export default class Welcome extends Component<{
               </View>
 
               <View style={styles.col}>
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('Survey')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/survey.png')}
                   />
                   <Text style={styles.menuText}>Questionnaire</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton}>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('About')}
+                  style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
                     source={require('../../assets/menu/question.png')}

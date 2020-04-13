@@ -9,6 +9,7 @@ import Survey from '../components/Survey/Survey';
 import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
+import Terms from '../components/Terms/Terms';
 const Drawer = createDrawerNavigator();
 
 export default class Tabs extends Component {
@@ -71,7 +72,7 @@ export default class Tabs extends Component {
             drawerIcon: (args: any) => this.getIcon(args, 'book'),
           }}
           name="Terms"
-          component={Survey}
+          component={Terms}
         />
         <Drawer.Screen
           options={{
