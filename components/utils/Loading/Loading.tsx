@@ -11,7 +11,7 @@ export default class Loading extends Component<{}> {
         useNativeDriver
         style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Image
-          source={require('../../../assets/logo.png')}
+          source={require('../../../assets/logo256.png')}
           style={{width: 90, height: 90}}
         />
       </Animatable.View>

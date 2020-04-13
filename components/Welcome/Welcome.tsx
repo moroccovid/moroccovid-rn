@@ -23,8 +23,17 @@ export default class Welcome extends Component<{
       <Loading />
     ) : (
       <View>
-        {/* <Header title="Acceuil" /> */}
-        <Text>Welcome screen</Text>
+        <Header
+          tapped={() => (this.props.navigation as any).toggleDrawer()}
+          title="Acceuil"
+        />
+        <View style={styles.wrapper}>
+          <Image
+            style={styles.logo}
+            source={require('../../assets/logo256.png')}
+          />
+          <Text style={styles.number}>+2120612345678</Text>
+        </View>
       </View>
     );
   }
