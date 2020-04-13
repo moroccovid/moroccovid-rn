@@ -20,7 +20,6 @@ export default class Score extends Component<{score: number}> {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          marginVertical: 18,
         }}>
         {this.getStars()}
       </View>

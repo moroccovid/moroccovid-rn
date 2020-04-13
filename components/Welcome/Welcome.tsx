@@ -9,6 +9,8 @@ import {
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Icon} from 'react-native-vector-icons/Icon';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -23,21 +25,80 @@ export default class Welcome extends Component<{
     return this.state.loading ? (
       <Loading />
     ) : (
-      <View>
+      <View style={{flex: 1}}>
         <Header
           tapped={() => (this.props.navigation as any).toggleDrawer()}
           title="Acceuil"
         />
         <View style={styles.wrapper}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/logo256.png')}
-          />
-          <View style={{marginTop: 15, alignItems: 'center'}}>
-            <Text style={styles.number}>+2120612345678</Text>
-            <Score score={3.5} />
+          <View style={{flex: 55}}>
+            <Image
+              style={styles.logo}
+              source={require('../../assets/logo256.png')}
+            />
+            <View
+              style={{marginTop: 15, marginBottom: 50, alignItems: 'center'}}>
+              <Text style={styles.number}>+2120612345678</Text>
+              <Score score={3.5} />
+            </View>
+          </View>
+          <View style={{flex: 44, width: '100%'}}>
+            <View style={styles.menu}>
+              <View style={styles.col}>
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/map.png')}
+                  />
+                  <Text style={styles.menuText}>Tracking</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/privacy.png')}
+                  />
+                  <Text style={styles.menuText}>Termes de confidentialite</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.col}>
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/itinerary.png')}
+                  />
+                  <Text style={styles.menuText}>Trajets</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/gear.png')}
+                  />
+                  <Text style={styles.menuText}>Parametres</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.col}>
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/survey.png')}
+                  />
+                  <Text style={styles.menuText}>Questionnaire</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton}>
+                  <Image
+                    style={styles.menuItem}
+                    source={require('../../assets/menu/question.png')}
+                  />
+                  <Text style={styles.menuText}>A propos de nous</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
+        <View style={{flex: 1}}></View>
       </View>
     );
   }
