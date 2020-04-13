@@ -8,6 +8,7 @@ import {
 } from 'react-navigation';
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
+import Score from './Score/Score';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -32,7 +33,10 @@ export default class Welcome extends Component<{
             style={styles.logo}
             source={require('../../assets/logo256.png')}
           />
-          <Text style={styles.number}>+2120612345678</Text>
+          <View style={{marginTop: 15, alignItems: 'center'}}>
+            <Text style={styles.number}>+2120612345678</Text>
+            <Score score={3.5} />
+          </View>
         </View>
       </View>
     );

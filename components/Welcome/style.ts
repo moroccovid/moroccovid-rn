@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   number: {
-    fontSize: 16,
+    fontSize: 18,
   },
 });
 
