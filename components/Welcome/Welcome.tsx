@@ -10,15 +10,22 @@ import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import deviceStorage from '../../services/deviceStorage';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: true};
+  state: any = {loading: true, number: null};
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({loading: false});
-    }, 1000);
+    deviceStorage
+      .getData('number')
+      .then((number) => {
+        if (!number) return this.props.navigation.navigate('Login');
+        this.setState({loading: false, number});
+      })
+      .catch(() => {
+        this.props.navigation.navigate('Login');
+      });
   }
   render() {
     return this.state.loading ? (
@@ -37,7 +44,7 @@ export default class Welcome extends Component<{
             />
             <View
               style={{marginTop: 15, marginBottom: 50, alignItems: 'center'}}>
-              <Text style={styles.number}>+2120612345678</Text>
+              <Text style={styles.number}>{this.state.number}</Text>
               <Score score={3.5} />
             </View>
           </View>

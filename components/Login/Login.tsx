@@ -11,12 +11,23 @@ import {Input, Button} from 'react-native-elements';
 import colors from '../../theme/colors';
 import * as yup from 'yup';
 import {Formik} from 'formik';
+import deviceStorage from '../../services/deviceStorage';
+
 export default class Login extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {loadingForm: false};
-  submit() {
+  submit(values: any) {
     this.setState({loadingForm: true});
+    deviceStorage
+      .saveItem('number', values.number)
+      .then(() => {
+        this.setState({loadingForm: false});
+        this.props.navigation.navigate('Drawer');
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
   }
   render() {
     return (
@@ -37,8 +48,11 @@ export default class Login extends Component<{
             validationSchema={yup.object().shape({
               number: yup
                 .string()
-                .required()
-                .matches(/(06|07)[0-9]{8}$/g),
+                .required('Veuillez remplir ce champ')
+                .matches(
+                  /(06|07)[0-9]{8}$/g,
+                  'Doit suivre le format 06xxxxxxxx ou 07xxxxxxxx',
+                ),
             })}>
             {({
               values,
@@ -58,6 +72,7 @@ export default class Login extends Component<{
                   value={values.number}
                   onChangeText={handleChange('number')}
                   onChange={() => setFieldTouched('number')}
+                  errorMessage={errors.number}
                 />
                 <Button
                   containerStyle={{marginTop: 50}}

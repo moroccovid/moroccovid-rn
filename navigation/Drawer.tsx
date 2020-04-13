@@ -10,10 +10,18 @@ import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
+import deviceStorage from '../services/deviceStorage';
+
 const Drawer = createDrawerNavigator();
 
 export default class Tabs extends Component {
-  state = {profile: {mobile: '', fullName: ''}};
+  state = {number: null};
+  componentDidMount() {
+    deviceStorage.getData('number').then((number) => {
+      if (!number) return;
+      this.setState({number});
+    });
+  }
   getIcon({color, size}: any, name: string) {
     return (
       <Icon
@@ -33,7 +41,7 @@ export default class Tabs extends Component {
     return (
       <Drawer.Navigator
         initialRouteName="Home"
-        drawerContent={(props: any) => customDrawer(props)}>
+        drawerContent={(props: any) => customDrawer(props, this.state.number)}>
         <Drawer.Screen
           options={{
             title: 'Accueil',
