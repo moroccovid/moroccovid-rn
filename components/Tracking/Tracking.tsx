@@ -1,5 +1,12 @@
 import React, {Component, Fragment} from 'react';
-import {Text, View, PermissionsAndroid, PermissionStatus} from 'react-native';
+import {
+  Text,
+  View,
+  PermissionsAndroid,
+  PermissionStatus,
+  Alert,
+  ToastAndroid,
+} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -153,7 +160,22 @@ export default class Tracking extends Component<{
     this.setState({status: 'none'});
   }
 
-  delete() {}
+  async delete() {
+    let supprimer = async () => {
+      const service = new TrajetService();
+      await service.delete(this.state.trajet_id);
+      this.setState({
+        trajet_id: null,
+        status: 'none',
+      });
+      ToastAndroid.show('Trajet supprimé.', ToastAndroid.LONG);
+    };
+    Alert.alert(
+      'Confirmation',
+      `Voulez-vous supprimer le trajet #${this.state.trajet_id}?`,
+      [{text: 'Oui', onPress: supprimer}, {text: 'Annuler'}],
+    );
+  }
 
   componentWillUnmount() {
     Geolocation.clearWatch(this.state.watchID);
