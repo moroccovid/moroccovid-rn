@@ -1,13 +1,12 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import {
-  Text,
   View,
   PermissionsAndroid,
   PermissionStatus,
   Alert,
   ToastAndroid,
+  Platform,
 } from 'react-native';
-import styles from './style';
 import {
   NavigationScreenProp,
   NavigationState,
@@ -19,8 +18,6 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import colors from '../../theme/colors';
 import MapView, {Polygon} from 'react-native-maps';
 import TrajetService from '../../database/services/TrajetService';
 import {Panel} from './Panel/Panel';
@@ -29,7 +26,7 @@ export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {
-    loading: false,
+    loading: true,
     status: 'none', // none -> started -> finished
     trajet_id: null,
     error: false,
@@ -49,8 +46,7 @@ export default class Tracking extends Component<{
   }
 
   async createTrajet() {
-    const service = new TrajetService();
-    const trajet_id = await service.create();
+    const trajet_id = await TrajetService.prototype.create();
     console.log('Tracking -> createTrajet -> trajet_id', trajet_id);
     this.setState({trajet_id});
   }
@@ -62,43 +58,33 @@ export default class Tracking extends Component<{
         "Veuillez nous donner la permission d'obtenir votre position",
       );
 
-    console.log('Getting initial location');
-    try {
-      Geolocation.getCurrentPosition(
-        (info: any) => {
-          console.log('Tracking -> getLocation -> info', info);
+    Geolocation.getCurrentPosition(
+      (info: any) => {
+        console.log('Tracking -> getLocation -> info', info);
 
-          let points = Object.assign([], this.state.points);
-          points.push({...info.coords, timestamp: info.timestamp});
-          console.table(points);
-          this.setState({
-            location: info.coords,
-            points,
-          });
-        },
-        (err: any) => {
-          console.log('TCL: Location -> getLocation -> err', err);
-          if (err.code === 3)
-            return this.showError(
-              'Un erreur est survenue, veuillez réessayer plus tard.',
-            );
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
+        let points = Object.assign([], this.state.points);
+        points.push({...info.coords, timestamp: info.timestamp});
+        console.table(points);
+        this.setState({
+          location: info.coords,
+          points,
+          loading: false,
+        });
+      },
+      (err: any) => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then((data: any) => {
+            this.getLocation();
           })
-            .then((data: any) => {
-              this.getLocation(false);
-            })
-            .catch((err: any) =>
-              this.showError('Veuillez activer la localisation et réessayer'),
-            );
-        },
-        {enableHighAccuracy: false},
-      );
-    } catch (error) {
-      console.error('error getting location: ', error);
-      this.showError('Un erreur est survenue, veuillez réessayer plus tard.');
-    }
+          .catch((err: any) => {
+            this.showError('Veuillez activer la localisation et réessayer');
+          });
+      },
+      {enableHighAccuracy: false},
+    );
   }
 
   async watchLocation() {
@@ -128,7 +114,7 @@ export default class Tracking extends Component<{
             fastInterval: 5000,
           })
             .then((data: any) => {
-              this.watchLocation(false);
+              this.watchLocation();
             })
             .catch((err: any) =>
               this.showError('Veuillez activer la localisation et réessayer'),
@@ -143,13 +129,12 @@ export default class Tracking extends Component<{
     }
   }
 
-  stopTracking() {
+  async stopTracking() {
     console.log('Tracking -> stopTracking -> stopTracking');
     Geolocation.clearWatch(this.state.watchID);
     this.setState({started: false, status: 'finished'});
 
-    const service = new TrajetService();
-    const trajet = service.doneTracking(
+    const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       this.state.points,
     );
@@ -162,13 +147,13 @@ export default class Tracking extends Component<{
 
   async delete() {
     let supprimer = async () => {
-      const service = new TrajetService();
-      await service.delete(this.state.trajet_id);
+      await TrajetService.prototype.delete(this.state.trajet_id);
       this.setState({
         trajet_id: null,
         status: 'none',
       });
-      ToastAndroid.show('Trajet supprimé.', ToastAndroid.LONG);
+      if (Platform.OS === 'android')
+        ToastAndroid.show('Trajet supprimé.', ToastAndroid.LONG);
     };
     Alert.alert(
       'Confirmation',
