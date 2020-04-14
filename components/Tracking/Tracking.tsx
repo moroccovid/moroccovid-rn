@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Text, View, PermissionsAndroid, PermissionStatus} from 'react-native';
 import styles from './style';
 import {
@@ -16,15 +16,17 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../../theme/colors';
 import MapView, {Polygon} from 'react-native-maps';
 import TrajetService from '../../database/services/TrajetService';
+import {Panel} from './Panel/Panel';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {
     loading: false,
-    started: false,
+    status: 'none', // none -> started -> finished
     trajet_id: null,
     error: false,
+    errorMsg: '',
     points: [],
   };
 
@@ -33,8 +35,10 @@ export default class Tracking extends Component<{
   }
 
   async startTracking() {
+    console.log('Tracking -> startTracking -> startTracking');
     this.createTrajet();
     this.watchLocation();
+    this.setState({status: 'started'});
   }
 
   async createTrajet() {
@@ -44,7 +48,7 @@ export default class Tracking extends Component<{
     this.setState({trajet_id});
   }
 
-  async getLocation(retry: boolean = true) {
+  async getLocation() {
     let granted = await this.checkPermission();
     if (!granted)
       return this.showError(
@@ -90,7 +94,7 @@ export default class Tracking extends Component<{
     }
   }
 
-  async watchLocation(retry: boolean = true) {
+  async watchLocation() {
     let granted = await this.checkPermission();
     if (!granted)
       return this.showError(
@@ -133,8 +137,20 @@ export default class Tracking extends Component<{
   }
 
   stopTracking() {
+    console.log('Tracking -> stopTracking -> stopTracking');
     Geolocation.clearWatch(this.state.watchID);
-    this.setState({started: false, finished: true});
+    this.setState({started: false, status: 'finished'});
+
+    const service = new TrajetService();
+    const trajet = service.doneTracking(
+      this.state.trajet_id,
+      this.state.points,
+    );
+    console.log('Tracking -> stopTracking -> trajet', trajet);
+  }
+
+  goAgain() {
+    this.setState({status: 'none'});
   }
 
   componentWillUnmount() {
@@ -156,7 +172,7 @@ export default class Tracking extends Component<{
   showError(msg: string) {
     this.setState({
       error: true,
-      message: msg,
+      errorMsg: msg,
     });
   }
 
@@ -169,42 +185,12 @@ export default class Tracking extends Component<{
           tapped={() => (this.props.navigation as any).toggleDrawer()}
           title="Tracking"
         />
-        <View
-          style={{
-            flex: 1,
-            paddingTop: 20,
-            paddingHorizontal: 50,
-            justifyContent: 'center',
-          }}>
-          {!this.state.started ? (
-            <TouchableOpacity
-              style={{
-                padding: 20,
-                backgroundColor: colors.primary,
-                borderRadius: 20,
-              }}
-              onPress={() => this.startTracking()}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
-                START
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={{
-                padding: 20,
-                backgroundColor: 'red',
-                borderRadius: 20,
-              }}
-              onPress={() => this.stopTracking()}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
-                STOP
-              </Text>
-            </TouchableOpacity>
-          )}
-          {this.state.error && (
-            <Text style={styles.error}>{this.state.message}</Text>
-          )}
-        </View>
+        <Panel
+          {...this.state}
+          startTracking={() => this.startTracking()}
+          stopTracking={() => this.stopTracking()}
+          goAgain={() => this.goAgain()}
+        />
         <View style={{flex: 5}}>
           {this.state.location ? (
             <MapView

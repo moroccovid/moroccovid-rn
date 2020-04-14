@@ -11,24 +11,34 @@ export default class TrajetService {
       logging: ['error', 'query', 'schema'],
       synchronize: true,
       entities: [Trajet, Location],
+      //TODO: remove this in prod
       dropSchema: true,
     });
   }
 
   async create(): Promise<number> {
-    await this.connect();
-
     const trajet = new Trajet();
     const repo = getRepository(Trajet);
 
     await repo.save(trajet);
-    console.log('TrajetService -> trajet', trajet);
 
     return trajet.id;
   }
 
+  async doneTracking(id: number, points: Location[]): Promise<Trajet> {
+    const repo = getRepository(Trajet);
+    const trajet = await repo.findOneOrFail(id);
+
+    trajet.locations = points;
+
+    // TODO: calculate max and min of each field
+
+    await repo.save(trajet);
+
+    return trajet;
+  }
+
   async getAll(): Promise<Trajet[]> {
-    await this.connect();
     const repo = getRepository(Trajet);
 
     const trajets = await repo.find();
