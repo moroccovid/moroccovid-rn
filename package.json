@@ -16,6 +16,7 @@
     "@react-navigation/drawer": "^5.4.1",
     "@react-navigation/native": "^5.0.1",
     "@react-navigation/stack": "^5.0.1",
+    "@types/node": "^13.11.1",
     "@types/yup": "^0.26.35",
     "formik": "^2.1.4",
     "react": "16.11.0",
@@ -29,8 +30,10 @@
     "react-native-reanimated": "^1.8.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.4.0",
+    "react-native-sqlite-storage": "^5.0.0",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^4.3.7",
+    "typeorm": "^0.2.24",
     "yup": "^0.28.1"
   },
   "devDependencies": {

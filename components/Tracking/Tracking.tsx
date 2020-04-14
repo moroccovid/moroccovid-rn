@@ -73,6 +73,10 @@ export default class Tracking extends Component<{
         },
         (err: any) => {
           console.log('TCL: Location -> getLocation -> err', err);
+          if (err.code === 3)
+            return this.showError(
+              'Un erreur est survenue, veuillez réessayer plus tard.',
+            );
           RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
             interval: 10000,
             fastInterval: 5000,
@@ -84,7 +88,7 @@ export default class Tracking extends Component<{
               this.showError('Veuillez activer la localisation et réessayer'),
             );
         },
-        {enableHighAccuracy: true},
+        {enableHighAccuracy: false},
       );
     } catch (error) {
       console.error('error getting location: ', error);
