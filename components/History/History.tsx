@@ -47,6 +47,11 @@ export default class History extends Component<{
       {text: 'Annuler'},
     ]);
   }
+
+  async syncTrajets(id: number) {
+    const trajet = await TrajetService.prototype.get(id);
+    console.log('Sending trajet..', trajet);
+  }
   render() {
     return this.state.loading ? (
       <Loading />
@@ -73,7 +78,12 @@ export default class History extends Component<{
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon name="upload" size={22} style={{marginLeft: 10}} />
+                <Icon
+                  name="upload"
+                  size={22}
+                  style={{marginLeft: 10}}
+                  onPress={() => this.syncTrajets(trajet.id)}
+                />
                 <Icon
                   name="trash"
                   size={22}

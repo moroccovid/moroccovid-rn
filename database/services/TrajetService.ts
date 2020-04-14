@@ -81,4 +81,12 @@ export default class TrajetService {
 
     return trajets;
   }
+
+  async get(id: number): Promise<Trajet> {
+    const repo = getRepository(Trajet);
+
+    const trajet = await repo.findOneOrFail(id, {relations: ['locations']});
+
+    return trajet;
+  }
 }
