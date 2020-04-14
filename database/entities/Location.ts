@@ -12,25 +12,25 @@ export class Location {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('float')
+  @Column('float', {nullable: true})
   latitude: number;
 
-  @Column('float')
+  @Column('float', {nullable: true})
   longitude: number;
 
-  @Column('float')
+  @Column('float', {nullable: true})
   altitude: number;
 
-  @Column('float')
+  @Column('float', {nullable: true})
   heading: number;
 
-  @Column('float')
+  @Column('float', {nullable: true})
   speed: number;
 
-  @Column('double')
+  @Column('double', {nullable: true})
   accuracy: number;
 
-  @Column('long')
+  @Column('unsigned big int', {nullable: true})
   timestamp: number;
 
   @ManyToOne((type) => Trajet, (trajet) => trajet.locations)

@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  Text,
-  View,
-  Image,
-  Alert,
-  PermissionsAndroid,
-  PermissionStatus,
-  ToastAndroid,
-} from 'react-native';
+import {Text, View, PermissionsAndroid, PermissionStatus} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -16,38 +8,40 @@ import {
 } from 'react-navigation';
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation, {
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../../theme/colors';
-import MapView, {Marker, Polygon} from 'react-native-maps';
+import MapView, {Polygon} from 'react-native-maps';
+import TrajetService from '../../database/services/TrajetService';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: false, staretd: false, error: false, points: []};
+  state: any = {
+    loading: false,
+    started: false,
+    trajet_id: null,
+    error: false,
+    points: [],
+  };
 
   async componentDidMount() {
     await this.getLocation();
   }
 
-  async checkPermission() {
-    let permitted = await PermissionsAndroid.check(
-      'android.permission.ACCESS_FINE_LOCATION',
-    );
-    let granted: PermissionStatus | boolean = true;
-    if (!permitted)
-      granted = await PermissionsAndroid.request(
-        'android.permission.ACCESS_FINE_LOCATION',
-      );
-    return granted && permitted;
+  async startTracking() {
+    this.createTrajet();
+    this.watchLocation();
   }
 
-  showError(msg: string) {
-    this.setState({
-      error: true,
-      message: msg,
-    });
+  async createTrajet() {
+    const service = new TrajetService();
+    const trajet_id = await service.create();
+    console.log('Tracking -> createTrajet -> trajet_id', trajet_id);
+    this.setState({trajet_id});
   }
 
   async getLocation(retry: boolean = true) {
@@ -63,7 +57,7 @@ export default class Tracking extends Component<{
         (info: any) => {
           console.log('Tracking -> getLocation -> info', info);
 
-          let {points} = this.state;
+          let points = Object.assign([], this.state.points);
           points.push({...info.coords, timestamp: info.timestamp});
           console.table(points);
           this.setState({
@@ -107,9 +101,9 @@ export default class Tracking extends Component<{
     this.setState({started: true});
     try {
       let watchID = Geolocation.watchPosition(
-        (info: any) => {
+        (info: GeolocationResponse) => {
           console.log('Tracking -> watchLocation -> info', info);
-          let {points} = this.state;
+          let points = Object.assign([], this.state.points);
           points.push({...info.coords, timestamp: info.timestamp});
           console.table(points);
           this.setState({
@@ -138,7 +132,7 @@ export default class Tracking extends Component<{
     }
   }
 
-  stopGettingLocation() {
+  stopTracking() {
     Geolocation.clearWatch(this.state.watchID);
     this.setState({started: false, finished: true});
   }
@@ -147,8 +141,23 @@ export default class Tracking extends Component<{
     Geolocation.clearWatch(this.state.watchID);
   }
 
-  onChange(location: any) {
-    console.log('Tracking -> onChange -> location', location.target());
+  async checkPermission() {
+    let permitted = await PermissionsAndroid.check(
+      'android.permission.ACCESS_FINE_LOCATION',
+    );
+    let granted: PermissionStatus | boolean = true;
+    if (!permitted)
+      granted = await PermissionsAndroid.request(
+        'android.permission.ACCESS_FINE_LOCATION',
+      );
+    return granted && permitted;
+  }
+
+  showError(msg: string) {
+    this.setState({
+      error: true,
+      message: msg,
+    });
   }
 
   render() {
@@ -174,7 +183,7 @@ export default class Tracking extends Component<{
                 backgroundColor: colors.primary,
                 borderRadius: 20,
               }}
-              onPress={() => this.getLocation()}>
+              onPress={() => this.startTracking()}>
               <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
                 START
               </Text>
@@ -186,7 +195,7 @@ export default class Tracking extends Component<{
                 backgroundColor: 'red',
                 borderRadius: 20,
               }}
-              onPress={() => this.stopGettingLocation()}>
+              onPress={() => this.stopTracking()}>
               <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
                 STOP
               </Text>
