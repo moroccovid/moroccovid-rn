@@ -153,6 +153,8 @@ export default class Tracking extends Component<{
     this.setState({status: 'none'});
   }
 
+  delete() {}
+
   componentWillUnmount() {
     Geolocation.clearWatch(this.state.watchID);
   }
@@ -190,6 +192,7 @@ export default class Tracking extends Component<{
           startTracking={() => this.startTracking()}
           stopTracking={() => this.stopTracking()}
           goAgain={() => this.goAgain()}
+          delete={() => this.delete()}
         />
         <View style={{flex: 5}}>
           {this.state.location ? (

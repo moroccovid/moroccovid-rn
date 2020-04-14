@@ -11,8 +11,6 @@ export default class TrajetService {
       logging: ['error', 'query', 'schema'],
       synchronize: true,
       entities: [Trajet, Location],
-      //TODO: remove this in prod
-      dropSchema: true,
     });
   }
 
@@ -29,20 +27,32 @@ export default class TrajetService {
     const repo = getRepository(Trajet);
     const trajet = await repo.findOneOrFail(id);
 
-    trajet.locations = points;
+    points.forEach((point) => {
+      let location = new Location();
+      Object.keys(point).forEach((key) => {
+        (location as any)[key] = (point as any)[key];
+      });
+      location.trajet = trajet;
+      getRepository(Location).save(location);
+    });
 
     // TODO: calculate max and min of each field
 
-    await repo.save(trajet);
+    try {
+      await repo.update(id, trajet);
+    } catch (error) {
+      console.log('TrajetService -> error', error);
+    }
 
     return trajet;
   }
 
-  async getAll(): Promise<Trajet[]> {
+  async getAll(includeLocatios: boolean = false): Promise<Trajet[]> {
     const repo = getRepository(Trajet);
 
-    const trajets = await repo.find();
-    console.log('TrajetService -> trajets', trajets);
+    const trajets = includeLocatios
+      ? await repo.find({relations: ['locations']})
+      : await repo.find();
 
     return trajets;
   }
