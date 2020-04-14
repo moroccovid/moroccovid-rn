@@ -9,11 +9,14 @@ import {
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import TrajetService from '../../database/services/TrajetService';
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {Trajet} from 'database/entities/Trajet';
+import dayjs from 'dayjs';
+import colors from '../../theme/colors';
 export default class History extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: true};
+  state: any = {loading: true, trajets: []};
   async componentDidMount() {
     await this.refresh();
   }
@@ -21,8 +24,13 @@ export default class History extends Component<{
   async refresh() {
     const service = new TrajetService();
     let trajets = await service.getAll();
+    console.log(trajets.length);
     console.log(trajets);
-    this.setState({loading: false});
+    this.setState({loading: false, trajets});
+  }
+
+  getDate(timestamp: number) {
+    return dayjs(timestamp).format('DD-MM-YYYY');
   }
 
   render() {
@@ -34,9 +42,37 @@ export default class History extends Component<{
           tapped={() => (this.props.navigation as any).toggleDrawer()}
           title="Trajets"
         />
-        <Text style={{fontSize: 20}} onPress={() => this.refresh()}>
-          History screen
-        </Text>
+        <View style={styles.list}>
+          {this.state.trajets.map((trajet: Trajet, i: number) => (
+            <View key={i} style={styles.listItem}>
+              <View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon
+                    name="map-marker-alt"
+                    size={20}
+                    style={{marginRight: 20}}
+                  />
+                  <Text style={styles.itemTitle}>Trajet #{trajet.id}</Text>
+                </View>
+                <Text style={{color: 'gray', marginTop: 10}}>
+                  {this.getDate(trajet.start)}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icon name="upload" size={22} style={{marginLeft: 10}} />
+                <Icon
+                  name="trash"
+                  size={22}
+                  color={colors.danger}
+                  style={{marginLeft: 10}}
+                />
+              </View>
+            </View>
+          ))}
+          {this.state.trajets.length === 0 && (
+            <Text style={styles.notFound}>Pas des trajets</Text>
+          )}
+        </View>
       </View>
     );
   }
