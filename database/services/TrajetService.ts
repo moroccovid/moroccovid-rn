@@ -36,7 +36,23 @@ export default class TrajetService {
       getRepository(Location).save(location);
     });
 
-    // TODO: calculate max and min of each field
+    trajet.min_altitude = Math.min(...points.map((point) => point.altitude));
+    trajet.max_altitude = Math.max(...points.map((point) => point.altitude));
+
+    trajet.min_latitude = Math.min(...points.map((point) => point.latitude));
+    trajet.max_latitude = Math.max(...points.map((point) => point.latitude));
+
+    trajet.min_longitude = Math.min(...points.map((point) => point.longitude));
+    trajet.max_longitude = Math.max(...points.map((point) => point.longitude));
+
+    trajet.min_heading = Math.min(...points.map((point) => point.heading));
+    trajet.max_heading = Math.max(...points.map((point) => point.heading));
+
+    trajet.min_accuracy = Math.min(...points.map((point) => point.accuracy));
+    trajet.max_accuracy = Math.max(...points.map((point) => point.accuracy));
+
+    trajet.min_speed = Math.min(...points.map((point) => point.speed));
+    trajet.max_speed = Math.max(...points.map((point) => point.speed));
 
     try {
       await repo.update(id, trajet);
