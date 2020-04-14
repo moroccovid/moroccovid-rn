@@ -23,6 +23,11 @@ export default class TrajetService {
     return trajet.id;
   }
 
+  async delete(id: number) {
+    const repo = getRepository(Trajet);
+    await repo.delete(id);
+  }
+
   async doneTracking(id: number, points: Location[]): Promise<Trajet> {
     const repo = getRepository(Trajet);
     const trajet = await repo.findOneOrFail(id);

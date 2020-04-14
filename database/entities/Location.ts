@@ -33,6 +33,8 @@ export class Location {
   @Column('unsigned big int', {nullable: true})
   timestamp: number;
 
-  @ManyToOne((type) => Trajet, (trajet) => trajet.locations)
+  @ManyToOne((type) => Trajet, (trajet) => trajet.locations, {
+    onDelete: 'CASCADE',
+  })
   trajet: Trajet;
 }

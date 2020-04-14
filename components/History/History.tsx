@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, Image} from 'react-native';
+import {Text, View, Image, Alert} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -19,6 +19,9 @@ export default class History extends Component<{
   state: any = {loading: true, trajets: []};
   async componentDidMount() {
     await this.refresh();
+    this.props.navigation.addListener('focus', () => {
+      this.refresh();
+    });
   }
 
   async refresh() {
@@ -33,6 +36,17 @@ export default class History extends Component<{
     return dayjs(timestamp).format('DD-MM-YYYY');
   }
 
+  async delete(id: number) {
+    let supprimer = async () => {
+      const service = new TrajetService();
+      await service.delete(id);
+      await this.refresh();
+    };
+    Alert.alert('Confirmation', `Voulez-vous supprimer le trajet #${id}?`, [
+      {text: 'Oui', onPress: supprimer},
+      {text: 'Annuler'},
+    ]);
+  }
   render() {
     return this.state.loading ? (
       <Loading />
@@ -65,6 +79,7 @@ export default class History extends Component<{
                   size={22}
                   color={colors.danger}
                   style={{marginLeft: 10}}
+                  onPress={() => this.delete(trajet.id)}
                 />
               </View>
             </View>
