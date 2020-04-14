@@ -11,6 +11,7 @@ export default class TrajetService {
       logging: ['error', 'query', 'schema'],
       synchronize: true,
       entities: [Trajet, Location],
+      dropSchema: true,
     });
   }
 
@@ -33,6 +34,9 @@ export default class TrajetService {
         (location as any)[key] = (point as any)[key];
       });
       location.trajet = trajet;
+      console.log('Found a point');
+      console.log(point);
+
       getRepository(Location).save(location);
     });
 
@@ -55,7 +59,7 @@ export default class TrajetService {
     trajet.max_speed = Math.max(...points.map((point) => point.speed));
 
     try {
-      await repo.update(id, trajet);
+      await repo.save(trajet);
     } catch (error) {
       console.log('TrajetService -> error', error);
     }

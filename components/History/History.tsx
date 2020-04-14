@@ -21,7 +21,7 @@ export default class History extends Component<{
   async refresh() {
     const service = new TrajetService();
     let trajets = await service.getAll();
-    console.table(trajets);
+    console.log(trajets);
     this.setState({loading: false});
   }
 
