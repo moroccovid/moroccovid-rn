@@ -52,7 +52,9 @@ export default class History extends Component<{
 
   async syncTrajets(id: number, el) {
     console.log('History -> syncTrajets -> el', el);
-    await TrackingManager.prototype.syncTrajet(id);
+    let success = await TrackingManager.prototype.syncTrajet(id);
+    if (!success)
+      return ToastAndroid.show('Pas de connexion Internet', ToastAndroid.LONG);
     ToastAndroid.show('Trajet synchronisé', ToastAndroid.SHORT);
     this.refresh();
   }
