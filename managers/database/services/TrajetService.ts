@@ -3,17 +3,6 @@ import {Location} from '../entities/Location';
 import {Trajet} from '../entities/Trajet';
 
 export default class TrajetService {
-  async connect() {
-    return createConnection({
-      type: 'react-native',
-      database: 'test',
-      location: 'default',
-      logging: ['error', 'query', 'schema'],
-      synchronize: true,
-      entities: [Trajet, Location],
-    });
-  }
-
   async create(): Promise<number> {
     const trajet = new Trajet();
     const repo = getRepository(Trajet);

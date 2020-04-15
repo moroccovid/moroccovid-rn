@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, Image, Alert} from 'react-native';
+import {Text, View, Alert} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -8,9 +8,9 @@ import {
 } from 'react-navigation';
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
-import TrajetService from '../../database/services/TrajetService';
+import TrajetService from '../../managers/database/services/TrajetService';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Trajet} from 'database/entities/Trajet';
+import {Trajet} from '../../managers/database/entities/Trajet';
 import dayjs from 'dayjs';
 import colors from '../../theme/colors';
 export default class History extends Component<{

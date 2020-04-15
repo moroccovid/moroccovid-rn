@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler';
 import React, {Component} from 'react';
 import Navigator from './navigation/Navigator';
-import TrajetService from './database/services/TrajetService';
+import DatabaseManager from './managers/database/manager';
 
 export default class App extends Component {
   componentDidMount() {
-    TrajetService.prototype.connect();
+    DatabaseManager.prototype.connect();
   }
   render() {
     return <Navigator />;

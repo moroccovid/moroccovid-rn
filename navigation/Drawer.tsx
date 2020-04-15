@@ -10,7 +10,7 @@ import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
-import deviceStorage from '../services/deviceStorage';
+import deviceStorage from '../managers/storage/manager';
 
 const Drawer = createDrawerNavigator();
 

@@ -19,7 +19,7 @@ import Geolocation, {
 } from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import MapView, {Polygon} from 'react-native-maps';
-import TrajetService from '../../database/services/TrajetService';
+import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
 
 export default class Tracking extends Component<{
