@@ -10,14 +10,14 @@ import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import deviceStorage from '../../managers/storage/manager';
+import StorageManager from '../../managers/storage/manager';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {loading: true, number: null};
   componentDidMount() {
-    deviceStorage
+    StorageManager.prototype
       .getData('number')
       .then((number) => {
         if (!number) return this.props.navigation.navigate('Login');

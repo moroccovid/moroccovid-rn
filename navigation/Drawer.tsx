@@ -10,14 +10,14 @@ import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
-import deviceStorage from '../managers/storage/manager';
+import StorageManager from '../managers/storage/manager';
 
 const Drawer = createDrawerNavigator();
 
 export default class Tabs extends Component {
   state = {number: null};
   componentDidMount() {
-    deviceStorage.getData('number').then((number) => {
+    StorageManager.prototype.getData('number').then((number) => {
       if (!number) return;
       this.setState({number});
     });

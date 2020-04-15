@@ -11,7 +11,7 @@ import {Input, Button} from 'react-native-elements';
 import colors from '../../theme/colors';
 import * as yup from 'yup';
 import {Formik} from 'formik';
-import deviceStorage from '../../managers/storage/manager';
+import StorageManager from '../../managers/storage/manager';
 
 export default class Login extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -19,13 +19,13 @@ export default class Login extends Component<{
   state: any = {loadingForm: false};
   submit(values: any) {
     this.setState({loadingForm: true});
-    deviceStorage
+    StorageManager.prototype
       .saveItem('number', values.number)
       .then(() => {
         this.setState({loadingForm: false});
         this.props.navigation.navigate('Drawer');
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.warn(err);
       });
   }

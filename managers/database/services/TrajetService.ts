@@ -78,4 +78,10 @@ export default class TrajetService {
 
     return trajet;
   }
+
+  async synced(id: number) {
+    let trajet = await this.get(id);
+    trajet.synced = true;
+    await getRepository(Trajet).save(trajet);
+  }
 }
