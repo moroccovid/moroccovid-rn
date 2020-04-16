@@ -21,15 +21,18 @@ export default class TrajetService {
     const repo = getRepository(Trajet);
     const trajet = await repo.findOneOrFail(id);
 
+    console.log('====== saving location =======');
     points.forEach((point) => {
       let location = new Location();
       Object.keys(point).forEach((key) => {
         (location as any)[key] = (point as any)[key];
       });
       location.trajet = trajet;
+      console.log(location.latitude + ',' + location.longitude);
 
       getRepository(Location).save(location);
     });
+    console.log('========================');
 
     trajet.min_altitude = Math.min(...points.map((point) => point.altitude));
     trajet.max_altitude = Math.max(...points.map((point) => point.altitude));
@@ -65,8 +68,8 @@ export default class TrajetService {
     const repo = getRepository(Trajet);
 
     const trajets = includeLocatios
-      ? await repo.find({relations: ['locations']})
-      : await repo.find();
+      ? await repo.find({relations: ['locations'], order: {id: 'DESC'}})
+      : await repo.find({order: {id: 'DESC'}});
 
     return trajets;
   }

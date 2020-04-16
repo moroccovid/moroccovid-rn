@@ -58,6 +58,9 @@ export default class History extends Component<{
     ToastAndroid.show('Trajet synchronisé', ToastAndroid.SHORT);
     this.refresh();
   }
+  details(id: number) {
+    this.props.navigation.navigate('Details', {trajet_id: id});
+  }
   render() {
     return this.state.loading ? (
       <Loading />
@@ -71,7 +74,7 @@ export default class History extends Component<{
           <ScrollView style={styles.list}>
             {this.state.trajets.map((trajet: Trajet, i: number) => (
               <View key={i} style={styles.listItem}>
-                <View>
+                <TouchableOpacity onPress={() => this.details(trajet.id)}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Icon
                       name="map-marker-alt"
@@ -83,7 +86,7 @@ export default class History extends Component<{
                   <Text style={{color: 'gray', marginTop: 10}}>
                     {this.getDate(trajet.start)}
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   {!trajet.synced && (
                     <TouchableOpacity

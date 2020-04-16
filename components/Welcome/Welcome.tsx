@@ -17,6 +17,13 @@ export default class Welcome extends Component<{
 }> {
   state: any = {loading: true, number: null};
   componentDidMount() {
+    this.checkNumber();
+    this.props.navigation.addListener('focus', () => {
+      this.checkNumber();
+    });
+  }
+
+  checkNumber() {
     StorageManager.prototype
       .getData('number')
       .then((number) => {

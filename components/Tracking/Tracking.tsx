@@ -6,6 +6,7 @@ import {
   Alert,
   ToastAndroid,
   Platform,
+  Text,
 } from 'react-native';
 import {
   NavigationScreenProp,
@@ -18,9 +19,10 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import MapView, {Polygon} from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
+import {Location} from 'managers/database/entities/Location';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -35,12 +37,15 @@ export default class Tracking extends Component<{
   };
 
   async componentDidMount() {
-    await this.getLocation();
+    this.props.navigation.addListener('focus', async () => {
+      await this.checkPermissions();
+    });
   }
 
   async startTracking() {
     console.log('Tracking -> startTracking -> startTracking');
     this.createTrajet();
+    if (this.state.points.length > 1) this.setState({points: []});
     this.watchLocation();
     this.setState({status: 'started'});
   }
@@ -51,50 +56,32 @@ export default class Tracking extends Component<{
     this.setState({trajet_id});
   }
 
-  async getLocation() {
-    let granted = await this.checkPermission();
-    if (!granted)
-      return this.showError(
-        "Veuillez nous donner la permission d'obtenir votre position",
-      );
-
+  async getLocation(enableHighAccuracy = true) {
     Geolocation.getCurrentPosition(
       (info: any) => {
         console.log('Tracking -> getLocation -> info', info);
-
-        let points = Object.assign([], this.state.points);
-        points.push({...info.coords, timestamp: info.timestamp});
-        console.table(points);
         this.setState({
           location: info.coords,
-          points,
+          points: [{...info.coords, timestamp: info.timestamp}],
           loading: false,
         });
       },
       (err: any) => {
-        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-          interval: 10000,
-          fastInterval: 5000,
-        })
-          .then((data: any) => {
-            this.getLocation();
-          })
-          .catch((err: any) => {
-            this.showError('Veuillez activer la localisation et réessayer');
-          });
+        console.log('Tracking -> getLocation -> err', err);
+        setTimeout(() => {
+          this.getLocation(false);
+        }, 2000);
       },
-      {enableHighAccuracy: false},
+      {enableHighAccuracy, timeout: 10000},
     );
   }
 
   async watchLocation() {
-    let granted = await this.checkPermission();
-    if (!granted)
-      return this.showError(
-        "Veuillez nous donner la permission d'obtenir votre position",
-      );
+    let granted = await this.checkPermissions();
+    if (!granted) return;
 
-    console.log('Getting location');
+    console.log('Watching location');
+
     this.setState({started: true});
     try {
       let watchID = Geolocation.watchPosition(
@@ -109,16 +96,7 @@ export default class Tracking extends Component<{
         },
         (err: any) => {
           console.log('TCL: Location -> watchLocation -> err', err);
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then((data: any) => {
-              this.watchLocation();
-            })
-            .catch((err: any) =>
-              this.showError('Veuillez activer la localisation et réessayer'),
-            );
+          this.showError('Veuillez activer la localisation et réessayer');
         },
         {enableHighAccuracy: true},
       );
@@ -133,10 +111,10 @@ export default class Tracking extends Component<{
     console.log('Tracking -> stopTracking -> stopTracking');
     Geolocation.clearWatch(this.state.watchID);
     this.setState({started: false, status: 'finished'});
-
+    let {points} = this.state;
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
-      this.state.points,
+      points,
     );
     console.log('Tracking -> stopTracking -> trajet', trajet);
   }
@@ -166,7 +144,7 @@ export default class Tracking extends Component<{
     Geolocation.clearWatch(this.state.watchID);
   }
 
-  async checkPermission() {
+  async checkPermissions() {
     let permitted = await PermissionsAndroid.check(
       'android.permission.ACCESS_FINE_LOCATION',
     );
@@ -175,7 +153,27 @@ export default class Tracking extends Component<{
       granted = await PermissionsAndroid.request(
         'android.permission.ACCESS_FINE_LOCATION',
       );
-    return granted && permitted;
+    if (!granted && !permitted) {
+      this.showError(
+        "Veuillez nous donner la permission d'obtenir votre position",
+      );
+      return false;
+    }
+
+    RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+      interval: 10000,
+      fastInterval: 5000,
+    })
+      .then((data: any) => {
+        this.getLocation();
+      })
+      .catch((err: any) =>
+        this.showError(
+          "Veuillez nous donner la permission d'obtenir votre position",
+        ),
+      );
+
+    return true;
   }
 
   showError(msg: string) {
@@ -204,6 +202,7 @@ export default class Tracking extends Component<{
         <View style={{flex: 5}}>
           {this.state.location ? (
             <MapView
+              zoomEnabled
               initialRegion={{
                 latitude: this.state.location.latitude,
                 longitude: this.state.location?.longitude,
@@ -211,9 +210,7 @@ export default class Tracking extends Component<{
                 longitudeDelta: 0.0421,
               }}
               showsUserLocation
-              style={{width: '100%', height: '100%'}}>
-              <Polygon coordinates={this.state.points} />
-            </MapView>
+              style={{width: '100%', height: '100%'}}></MapView>
           ) : null}
         </View>
       </View>

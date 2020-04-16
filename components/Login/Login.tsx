@@ -36,7 +36,7 @@ export default class Login extends Component<{
           style={styles.logo}
           source={require('../../assets/logo256.png')}
         />
-        <Text style={styles.title}>S'identification</Text>
+        <Text style={styles.title}>Identification</Text>
         <Text style={styles.subtitle}>
           On est besoin de votre numero de telephone pour vous identifiez.
         </Text>

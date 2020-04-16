@@ -11,6 +11,7 @@ import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
 import StorageManager from '../managers/storage/manager';
+import HistoryStack from '../components/History/Stack';
 
 const Drawer = createDrawerNavigator();
 
@@ -64,7 +65,7 @@ export default class Tabs extends Component {
             drawerIcon: (args: any) => this.getIcon(args, 'clock'),
           }}
           name="History"
-          component={History}
+          component={HistoryStack}
         />
         <Drawer.Screen
           options={{
