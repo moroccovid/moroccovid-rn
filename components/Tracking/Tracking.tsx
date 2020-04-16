@@ -22,7 +22,6 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import MapView, {Marker} from 'react-native-maps';
 import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
-import {Location} from 'managers/database/entities/Location';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -58,58 +57,38 @@ export default class Tracking extends Component<{
 
   async getLocation(enableHighAccuracy = true) {
     Geolocation.getCurrentPosition(
-      (info: any) => {
-        console.log('Tracking -> getLocation -> info', info);
+      (info: GeolocationResponse) => {
+        console.log(
+          'Tracking -> getLocation -> info',
+          `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
+        );
         this.setState({
           location: info.coords,
-          points: [{...info.coords, timestamp: info.timestamp}],
+          points: [
+            ...this.state.points,
+            {...info.coords, timestamp: info.timestamp},
+          ],
           loading: false,
         });
       },
       (err: any) => {
         console.log('Tracking -> getLocation -> err', err);
         setTimeout(() => {
-          this.getLocation(false);
+          this.getLocation(true);
         }, 2000);
       },
-      {enableHighAccuracy, timeout: 10000},
+      {enableHighAccuracy, distanceFilter: 0},
     );
   }
 
   async watchLocation() {
-    let granted = await this.checkPermissions();
-    if (!granted) return;
-
-    console.log('Watching location');
-
-    this.setState({started: true});
-    try {
-      let watchID = Geolocation.watchPosition(
-        (info: GeolocationResponse) => {
-          console.log('Tracking -> watchLocation -> info', info);
-          let points = Object.assign([], this.state.points);
-          points.push({...info.coords, timestamp: info.timestamp});
-          console.table(points);
-          this.setState({
-            points,
-          });
-        },
-        (err: any) => {
-          console.log('TCL: Location -> watchLocation -> err', err);
-          this.showError('Veuillez activer la localisation et réessayer');
-        },
-        {enableHighAccuracy: true},
-      );
-      this.setState({watchID});
-    } catch (error) {
-      console.error('error getting location: ', error);
-      this.showError('Un erreur est survenue, veuillez réessayer plus tard.');
-    }
+    let intervalID = setInterval(() => this.getLocation(true), 7000);
+    this.setState({intervalID});
   }
 
   async stopTracking() {
     console.log('Tracking -> stopTracking -> stopTracking');
-    Geolocation.clearWatch(this.state.watchID);
+    clearInterval(this.state.intervalID);
     this.setState({started: false, status: 'finished'});
     let {points} = this.state;
     const trajet = await TrajetService.prototype.doneTracking(
@@ -141,7 +120,7 @@ export default class Tracking extends Component<{
   }
 
   componentWillUnmount() {
-    Geolocation.clearWatch(this.state.watchID);
+    clearInterval(this.state.intervalID);
   }
 
   async checkPermissions() {
