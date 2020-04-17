@@ -50,7 +50,7 @@ export default class History extends Component<{
     ]);
   }
 
-  async syncTrajets(id: number, el) {
+  async syncTrajets(id: number) {
     console.log('History -> syncTrajets -> el', el);
     let success = await TrackingManager.prototype.syncTrajet(id);
     if (!success)
@@ -90,7 +90,7 @@ export default class History extends Component<{
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   {!trajet.synced && (
                     <TouchableOpacity
-                      onPress={() => this.syncTrajets(trajet.id, this)}>
+                      onPress={() => this.syncTrajets(trajet.id)}>
                       <Icon name="upload" size={22} style={{marginLeft: 10}} />
                     </TouchableOpacity>
                   )}

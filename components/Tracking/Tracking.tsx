@@ -18,11 +18,10 @@ import Header from '../utils/Header/Header';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import MapView, {Marker} from 'react-native-maps';
 import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
-
+import ReactNativeLocationServicesSettings from 'react-native-location-services-settings';
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
@@ -62,6 +61,10 @@ export default class Tracking extends Component<{
           'Tracking -> getLocation -> info',
           `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
         );
+        ToastAndroid.show(
+          `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
+          ToastAndroid.SHORT,
+        );
         this.setState({
           location: info.coords,
           points: [
@@ -82,6 +85,7 @@ export default class Tracking extends Component<{
   }
 
   async watchLocation() {
+    this.getLocation(true);
     let intervalID = setInterval(() => this.getLocation(true), 7000);
     this.setState({intervalID});
   }
@@ -139,19 +143,24 @@ export default class Tracking extends Component<{
       return false;
     }
 
-    RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-      interval: 10000,
-      fastInterval: 5000,
-    })
-      .then((data: any) => {
-        this.getLocation();
-      })
-      .catch((err: any) =>
-        this.showError(
-          "Veuillez nous donner la permission d'obtenir votre position",
-        ),
-      );
-
+    // possible values: 'high_accuracy', 'balanced_power_accuracy', 'low_power'
+    ReactNativeLocationServicesSettings.checkStatus('high_accuracy').then(
+      (res) => {
+        if (!res.enabled) {
+          ReactNativeLocationServicesSettings.askForEnabling((res) => {
+            if (res) {
+              this.getLocation(true);
+            } else {
+              console.log('location services were denied by the user');
+              this.showError(
+                "Veuillez nous donner la permission d'obtenir votre position",
+              );
+            }
+          });
+        }
+        this.getLocation(true);
+      },
+    );
     return true;
   }
 

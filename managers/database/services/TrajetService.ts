@@ -1,6 +1,7 @@
 import {createConnection, getRepository} from 'typeorm/browser';
 import {Location} from '../entities/Location';
 import {Trajet} from '../entities/Trajet';
+import {ToastAndroid, Alert} from 'react-native';
 
 export default class TrajetService {
   async create(): Promise<number> {
@@ -17,51 +18,51 @@ export default class TrajetService {
     await repo.delete(id);
   }
 
-  async doneTracking(id: number, points: Location[]): Promise<Trajet> {
-    const repo = getRepository(Trajet);
-    const trajet = await repo.findOneOrFail(id);
-
-    console.log('====== saving location =======');
-    points.forEach((point) => {
-      let location = new Location();
-      Object.keys(point).forEach((key) => {
-        (location as any)[key] = (point as any)[key];
-      });
-      location.trajet = trajet;
-      console.log(location.latitude + ',' + location.longitude);
-
-      getRepository(Location).save(location);
-    });
-    console.log('========================');
-
-    trajet.min_altitude = Math.min(...points.map((point) => point.altitude));
-    trajet.max_altitude = Math.max(...points.map((point) => point.altitude));
-
-    trajet.min_latitude = Math.min(...points.map((point) => point.latitude));
-    trajet.max_latitude = Math.max(...points.map((point) => point.latitude));
-
-    trajet.min_longitude = Math.min(...points.map((point) => point.longitude));
-    trajet.max_longitude = Math.max(...points.map((point) => point.longitude));
-
-    trajet.min_heading = Math.min(...points.map((point) => point.heading));
-    trajet.max_heading = Math.max(...points.map((point) => point.heading));
-
-    trajet.min_accuracy = Math.min(...points.map((point) => point.accuracy));
-    trajet.max_accuracy = Math.max(...points.map((point) => point.accuracy));
-
-    trajet.min_speed = Math.min(...points.map((point) => point.speed));
-    trajet.max_speed = Math.max(...points.map((point) => point.speed));
-
-    trajet.start = Math.min(...points.map((point) => point.timestamp));
-    trajet.end = Math.max(...points.map((point) => point.timestamp));
-
+  async doneTracking(id: number, points: Location[]): Promise<Trajet | null> {
     try {
-      await repo.save(trajet);
+      const repo = getRepository(Trajet);
+      let trajet = await repo.findOneOrFail(id);
+      points.forEach((point) => {
+        let location = new Location();
+        Object.keys(point).forEach((key) => {
+          (location as any)[key] = (point as any)[key];
+        });
+        location.trajet = trajet;
+        getRepository(Location).insert(location);
+      });
+
+      trajet.min_altitude = Math.min(...points.map((point) => point.altitude));
+      trajet.max_altitude = Math.max(...points.map((point) => point.altitude));
+
+      trajet.min_latitude = Math.min(...points.map((point) => point.latitude));
+      trajet.max_latitude = Math.max(...points.map((point) => point.latitude));
+
+      trajet.min_longitude = Math.min(
+        ...points.map((point) => point.longitude),
+      );
+      trajet.max_longitude = Math.max(
+        ...points.map((point) => point.longitude),
+      );
+
+      trajet.min_heading = Math.min(...points.map((point) => point.heading));
+      trajet.max_heading = Math.max(...points.map((point) => point.heading));
+
+      trajet.min_accuracy = Math.min(...points.map((point) => point.accuracy));
+      trajet.max_accuracy = Math.max(...points.map((point) => point.accuracy));
+
+      trajet.min_speed = Math.min(...points.map((point) => point.speed));
+      trajet.max_speed = Math.max(...points.map((point) => point.speed));
+
+      trajet.start = Math.min(...points.map((point) => point.timestamp));
+      trajet.end = Math.max(...points.map((point) => point.timestamp));
+
+      delete trajet.locations;
+      await repo.update(id, trajet);
+      return trajet;
     } catch (error) {
       console.log('TrajetService -> error', error);
     }
-
-    return trajet;
+    return null;
   }
 
   async getAll(includeLocatios: boolean = false): Promise<Trajet[]> {

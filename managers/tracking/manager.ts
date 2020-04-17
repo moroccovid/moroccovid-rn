@@ -1,7 +1,7 @@
 import TrajetService from '../database/services/TrajetService';
 import StorageManager from '../storage/manager';
 import ConnectivityManager from '../device/connectivity/manager';
-import axios, {AxiosInstance, AxiosResponse, AxiosError} from 'axios';
+import firestore from '@react-native-firebase/firestore';
 
 export default class TrackingManager {
   async syncTrajet(id: number): Promise<boolean> {
@@ -15,10 +15,7 @@ export default class TrackingManager {
 
     console.log('TrackingManager -> syncTrajet -> data', data);
 
-    let resp = await axios.post(
-      'https://moroccovid-tracking.herokuapp.com/',
-      data,
-    );
+    await firestore().collection('trajets').add(trajet);
 
     await TrajetService.prototype.synced(id);
     return true;
