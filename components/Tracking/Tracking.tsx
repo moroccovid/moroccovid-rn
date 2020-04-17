@@ -117,6 +117,8 @@ export default class Tracking extends Component<{
       this.setState({
         trajet_id: null,
         status: 'none',
+        synced: false,
+        syncing: false,
       });
       if (Platform.OS === 'android')
         ToastAndroid.show('Trajet supprimé.', ToastAndroid.LONG);
