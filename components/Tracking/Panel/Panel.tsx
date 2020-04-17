@@ -1,17 +1,21 @@
 import React, {Fragment} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import styles from '../style';
 import colors from '../../../theme/colors';
-import {Button} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export function Panel(props: {
   status: 'none' | 'started' | 'finished';
   error: boolean;
+  synced: boolean;
+  syncing: boolean;
   errorMsg: string | null;
   trajet_id: number | null;
   startTracking: any;
   stopTracking: any;
   goAgain: any;
+  delete: any;
+  syncTrajet: any;
 }) {
   return (
     <View
@@ -70,9 +74,29 @@ export function Panel(props: {
               marginTop: 10,
             }}>
             <Text style={{fontSize: 14}}>Trajet #{props.trajet_id}</Text>
-            <Text style={{fontSize: 14, color: 'red'}} onPress={props.delete}>
-              Supprimer
-            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {props.syncing ? (
+                <ActivityIndicator />
+              ) : !props.synced ? (
+                <TouchableOpacity
+                  onPress={async () => await props.syncTrajet()}>
+                  <Icon
+                    name="cloud-upload-alt"
+                    size={22}
+                    style={{marginLeft: 10}}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <Icon name="check" size={22} style={{marginLeft: 10}} />
+              )}
+              <Icon
+                name="trash"
+                size={22}
+                color={colors.danger}
+                style={{marginLeft: 10}}
+                onPress={() => props.delete(props.trajet_id)}
+              />
+            </View>
           </View>
         </Fragment>
       )}

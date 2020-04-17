@@ -21,6 +21,7 @@ import MapView from 'react-native-maps';
 import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import TrackingManager from '../../managers/tracking/manager';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -43,7 +44,7 @@ export default class Tracking extends Component<{
   async startTracking() {
     console.log('Tracking -> startTracking -> startTracking');
     this.createTrajet();
-    if (this.state.points.length > 1) this.setState({points: []});
+    this.setState({points: [], synced: false, syncing: false});
     this.watchLocation();
     this.setState({status: 'started'});
   }
@@ -151,10 +152,10 @@ export default class Tracking extends Component<{
       interval: 10000,
       fastInterval: 5000,
     })
-      .then((data) => {
+      .then((data: any) => {
         this.getLocation(true);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log('location services were denied by the user', err);
         this.showError(
           "Veuillez nous donner la permission d'obtenir votre position",
@@ -169,6 +170,19 @@ export default class Tracking extends Component<{
       error: true,
       errorMsg: msg,
     });
+  }
+
+  async syncTrajet() {
+    this.setState({synced: false, syncing: true});
+    let success = await TrackingManager.prototype.syncTrajet(
+      this.state.trajet_id,
+    );
+    if (!success) {
+      this.setState({synced: false, syncing: false});
+      return ToastAndroid.show('Pas de connexion Internet', ToastAndroid.LONG);
+    }
+    ToastAndroid.show('Trajet synchronisé', ToastAndroid.SHORT);
+    this.setState({synced: true, syncing: false});
   }
 
   render() {
@@ -186,6 +200,7 @@ export default class Tracking extends Component<{
           stopTracking={() => this.stopTracking()}
           goAgain={() => this.goAgain()}
           delete={() => this.delete()}
+          syncTrajet={async () => await this.syncTrajet()}
         />
         <View style={{flex: 5}}>
           {this.state.location ? (
