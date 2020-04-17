@@ -1,5 +1,12 @@
 import React, {Component, Fragment} from 'react';
-import {Text, View, Alert, ToastAndroid, ScrollView} from 'react-native';
+import {
+  Text,
+  View,
+  Alert,
+  ToastAndroid,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -15,6 +22,7 @@ import dayjs from 'dayjs';
 import colors from '../../theme/colors';
 import TrackingManager from '../../managers/tracking/manager';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {threadId} from 'worker_threads';
 export default class History extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
@@ -48,10 +56,15 @@ export default class History extends Component<{
     ]);
   }
 
-  async syncTrajets(id: number) {
+  async syncTrajets(id: number, index: number) {
+    let {trajets} = this.state;
+    trajets[index].syncing = true;
+    this.setState({trajets});
     let success = await TrackingManager.prototype.syncTrajet(id);
-    if (!success)
+    if (!success) {
+      this.refresh();
       return ToastAndroid.show('Pas de connexion Internet', ToastAndroid.LONG);
+    }
     ToastAndroid.show('Trajet synchronisé', ToastAndroid.SHORT);
     this.refresh();
   }
@@ -85,11 +98,19 @@ export default class History extends Component<{
                   </Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  {!trajet.synced && (
+                  {(trajet as any).syncing ? (
+                    <ActivityIndicator />
+                  ) : !trajet.synced ? (
                     <TouchableOpacity
-                      onPress={() => this.syncTrajets(trajet.id)}>
-                      <Icon name="upload" size={22} style={{marginLeft: 10}} />
+                      onPress={() => this.syncTrajets(trajet.id, i)}>
+                      <Icon
+                        name="cloud-upload-alt"
+                        size={22}
+                        style={{marginLeft: 10}}
+                      />
                     </TouchableOpacity>
+                  ) : (
+                    <Icon name="check" size={22} style={{marginLeft: 10}} />
                   )}
                   <Icon
                     name="trash"
