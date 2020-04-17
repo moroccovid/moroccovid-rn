@@ -20,15 +20,6 @@ export default class Details extends Component<{
     const trajet = await TrajetService.prototype.get(
       (this.props as any).route.params.trajet_id,
     );
-    console.log('Details -> componentDidMount -> trajet', trajet.locations);
-    console.log('=================');
-    trajet.locations
-      .map((el: any) => ({
-        latitude: el.latitude,
-        longitude: el.longitude,
-      }))
-      .forEach((el) => console.log(el));
-    console.log('=================');
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
     this.setState({loading: false, trajet, location: trajet.locations[0]});
   }

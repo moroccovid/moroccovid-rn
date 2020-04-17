@@ -29,8 +29,6 @@ export default class History extends Component<{
   async refresh() {
     const service = new TrajetService();
     let trajets = await service.getAll();
-    console.log(trajets.length);
-    console.log(trajets);
     this.setState({loading: false, trajets});
   }
 
@@ -51,7 +49,6 @@ export default class History extends Component<{
   }
 
   async syncTrajets(id: number) {
-    console.log('History -> syncTrajets -> el', el);
     let success = await TrackingManager.prototype.syncTrajet(id);
     if (!success)
       return ToastAndroid.show('Pas de connexion Internet', ToastAndroid.LONG);

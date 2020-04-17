@@ -13,8 +13,6 @@ export default class TrackingManager {
 
     let data = {number, trajet};
 
-    console.log('TrackingManager -> syncTrajet -> data', data);
-
     await firestore().collection('trajets').add(trajet);
 
     await TrajetService.prototype.synced(id);
