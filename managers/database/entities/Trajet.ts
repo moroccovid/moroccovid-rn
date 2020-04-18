@@ -5,6 +5,7 @@ import {
   OneToMany,
 } from 'typeorm/browser';
 import {Location} from './Location';
+import {Detect} from './Detect';
 
 @Entity('trajet')
 export class Trajet {
@@ -16,6 +17,9 @@ export class Trajet {
 
   @OneToMany((type) => Location, (location) => location.trajet)
   locations: Location[];
+
+  @OneToMany((type) => Detect, (detect) => detect.trajet)
+  detects: Detect[];
 
   @Column('unsigned big int', {nullable: true})
   start: number;

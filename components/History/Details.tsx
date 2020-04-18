@@ -8,9 +8,7 @@ import {
 import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import TrajetService from '../../managers/database/services/TrajetService';
-import dayjs from 'dayjs';
-import TrackingManager from '../../managers/tracking/manager';
-import MapView, {Polygon, Polyline, Marker} from 'react-native-maps';
+import MapView, {Polyline} from 'react-native-maps';
 import colors from '../../theme/colors';
 export default class Details extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -21,6 +19,7 @@ export default class Details extends Component<{
       (this.props as any).route.params.trajet_id,
     );
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
+    console.log('Details -> componentDidMount -> trajet', trajet);
     this.setState({loading: false, trajet, location: trajet.locations[0]});
   }
 

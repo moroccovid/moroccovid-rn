@@ -6,13 +6,13 @@ import {
 } from 'typeorm/browser';
 import {Trajet} from './Trajet';
 
-@Entity('location')
-export class Location {
+@Entity('detect')
+export class Detect {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column('varchar')
-  mac: number;
+  mac: string;
 
   @ManyToOne((type) => Trajet, (trajet) => trajet.locations, {
     onDelete: 'CASCADE',

@@ -34,6 +34,7 @@ export default class Tracking extends Component<{
     error: false,
     errorMsg: '',
     points: [],
+    IDS: [],
   };
 
   async componentDidMount() {
@@ -97,10 +98,11 @@ export default class Tracking extends Component<{
 
     bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
       if (err || !device) return;
-      let IDS = this.state.bleDevicesIDS as string[];
+      console.log('Tracking -> watchLocation -> device', device);
+      let IDS = this.state.IDS as string[];
       if (IDS.includes(device.id)) return;
       IDS.push(device.id);
-      this.setState({bleDevicesIDS: IDS});
+      this.setState({IDS});
     });
 
     this.setState({intervalID});
@@ -114,7 +116,7 @@ export default class Tracking extends Component<{
     bleManager.stopDeviceScan();
 
     this.setState({started: false, status: 'finished'});
-    let {points} = this.state;
+    let {points, IDS} = this.state;
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       points,
@@ -179,6 +181,10 @@ export default class Tracking extends Component<{
           "Veuillez nous donner la permission d'obtenir votre position",
         );
       });
+
+    let bleManager = new BleManager();
+    const resp = await bleManager.enable();
+    console.log('Tracking -> checkPermissions -> resp', resp);
 
     return true;
   }

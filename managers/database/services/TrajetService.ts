@@ -2,6 +2,7 @@ import {createConnection, getRepository} from 'typeorm/browser';
 import {Location} from '../entities/Location';
 import {Trajet} from '../entities/Trajet';
 import {ToastAndroid, Alert} from 'react-native';
+import {Detect} from '../entities/Detect';
 
 export default class TrajetService {
   async create(): Promise<number> {
@@ -18,7 +19,11 @@ export default class TrajetService {
     await repo.delete(id);
   }
 
-  async doneTracking(id: number, points: Location[]): Promise<Trajet | null> {
+  async doneTracking(
+    id: number,
+    points: Location[],
+    IDS: string[],
+  ): Promise<Trajet | null> {
     try {
       const repo = getRepository(Trajet);
       let trajet = await repo.findOneOrFail(id);
@@ -29,6 +34,13 @@ export default class TrajetService {
         });
         location.trajet = trajet;
         getRepository(Location).insert(location);
+      });
+
+      IDS.forEach((d) => {
+        let detect = new Detect();
+        detect.mac = d;
+        detect.trajet = trajet;
+        getRepository(Detect).insert(detect);
       });
 
       trajet.min_altitude = Math.min(...points.map((point) => point.altitude));
@@ -57,6 +69,7 @@ export default class TrajetService {
       trajet.end = Math.max(...points.map((point) => point.timestamp));
 
       delete trajet.locations;
+      delete trajet.detects;
       await repo.update(id, trajet);
       return trajet;
     } catch (error) {
@@ -78,7 +91,9 @@ export default class TrajetService {
   async get(id: number): Promise<Trajet> {
     const repo = getRepository(Trajet);
 
-    const trajet = await repo.findOneOrFail(id, {relations: ['locations']});
+    const trajet = await repo.findOneOrFail(id, {
+      relations: ['locations', 'detects'],
+    });
 
     return trajet;
   }
