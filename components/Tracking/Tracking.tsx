@@ -184,7 +184,6 @@ export default class Tracking extends Component<{
 
     let bleManager = new BleManager();
     const resp = await bleManager.enable();
-    console.log('Tracking -> checkPermissions -> resp', resp);
 
     return true;
   }

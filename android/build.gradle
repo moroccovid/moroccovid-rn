@@ -16,7 +16,6 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:3.5.2")
-        classpath 'com.google.gms:google-services:4.2.0'//FIREBASE
     }
 }
 
@@ -37,5 +36,3 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
-
-apply plugin: 'com.google.gms.google-services'
