@@ -30,7 +30,6 @@ export function Panel(props: {
           style={{
             padding: 20,
             backgroundColor: colors.primary,
-            borderRadius: 20,
           }}
           onPress={props.startTracking}>
           <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
@@ -43,7 +42,6 @@ export function Panel(props: {
             style={{
               padding: 20,
               backgroundColor: 'red',
-              borderRadius: 20,
             }}
             onPress={() => props.stopTracking()}>
             <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
@@ -60,7 +58,6 @@ export function Panel(props: {
             style={{
               padding: 20,
               backgroundColor: colors.primary,
-              borderRadius: 20,
             }}
             onPress={props.startTracking}>
             <Text style={{textAlign: 'center', fontSize: 18, color: 'white'}}>
