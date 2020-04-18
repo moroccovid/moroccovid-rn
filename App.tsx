@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import Navigator from './navigation/Navigator';
 import DatabaseManager from './managers/database/manager';
 import firebase from '@react-native-firebase/app';
-
+import {BleManager} from 'react-native-ble-plx';
 export default class App extends Component {
   componentDidMount() {
     firebase.initializeApp({

@@ -22,6 +22,7 @@ import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import TrackingManager from '../../managers/tracking/manager';
+import {BleManager, Device} from 'react-native-ble-plx';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -92,17 +93,32 @@ export default class Tracking extends Component<{
   async watchLocation() {
     this.getLocation(true);
     let intervalID = setInterval(() => this.getLocation(true), 7000);
+    let bleManager = new BleManager();
+
+    bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
+      if (err || !device) return;
+      let IDS = this.state.bleDevicesIDS as string[];
+      if (IDS.includes(device.id)) return;
+      IDS.push(device.id);
+      this.setState({bleDevicesIDS: IDS});
+    });
+
     this.setState({intervalID});
   }
 
   async stopTracking() {
     console.log('Tracking -> stopTracking -> stopTracking');
     clearInterval(this.state.intervalID);
+
+    let bleManager = new BleManager();
+    bleManager.stopDeviceScan();
+
     this.setState({started: false, status: 'finished'});
     let {points} = this.state;
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       points,
+      IDS,
     );
     console.log('Tracking -> stopTracking -> trajet', trajet);
   }
