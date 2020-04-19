@@ -22,6 +22,8 @@ export default class Details extends Component<{
 
     console.log('Trajet:');
     console.log(JSON.stringify(trajet));
+    console.log(trajet);
+
     this.setState({loading: false, trajet, location: trajet.locations[0]});
   }
 

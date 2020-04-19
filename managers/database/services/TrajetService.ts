@@ -22,7 +22,7 @@ export default class TrajetService {
   async doneTracking(
     id: number,
     points: Location[],
-    IDS: string[],
+    detects: any[],
   ): Promise<Trajet | null> {
     try {
       const repo = getRepository(Trajet);
@@ -36,9 +36,11 @@ export default class TrajetService {
         getRepository(Location).insert(location);
       });
 
-      IDS.forEach((d) => {
+      detects.forEach((d) => {
         let detect = new Detect();
-        detect.mac = d;
+        Object.keys(d).forEach((key) => {
+          (detect as any)[key] = (d as any)[key];
+        });
         detect.trajet = trajet;
         getRepository(Detect).insert(detect);
       });

@@ -7,19 +7,20 @@ export default class TrackingManager {
     const connected = await ConnectivityManager.prototype.checkConnection();
     if (!connected) return false;
 
-    const trajet: any = await TrajetService.prototype.get(id);
+    const trajet = await TrajetService.prototype.get(id);
     const mac = await StorageManager.prototype.getData('mac');
 
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
 
-    trajet.start = trajet.location[0];
-    trajet.end = trajet.location[trajet.location - 1];
+    let path = {
+      start: trajet.locations[0],
+      end: trajet.locations[trajet.locations.length - 1],
+      detects: trajet.detects,
+    };
 
-    delete trajet.locations;
+    let data = {mac, path};
 
-    let data = {mac, trajet};
-
-    console.log('TrackingManager -> data', data);
+    console.log('TrackingManager -> data', JSON.stringify(data));
 
     return false;
 

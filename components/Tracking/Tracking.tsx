@@ -34,7 +34,7 @@ export default class Tracking extends Component<{
     error: false,
     errorMsg: '',
     points: [],
-    IDS: [],
+    detects: [],
   };
 
   async componentDidMount() {
@@ -98,11 +98,27 @@ export default class Tracking extends Component<{
 
     bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
       if (err || !device) return;
-      console.log('Tracking -> watchLocation -> device', device);
-      let IDS = this.state.IDS as string[];
-      if (IDS.includes(device.id)) return;
-      IDS.push(device.id);
-      this.setState({IDS});
+      console.log('Tracking -> watchLocation -> device.id', device.id);
+      let detects = this.state.detects as any[];
+
+      // Cheking if we have already detected this device
+      for (let index = 0; index < detects.length; index++)
+        if (detects[index].mac === device.id) return;
+
+      Geolocation.getCurrentPosition(
+        (info: GeolocationResponse) => {
+          detects.push({
+            mac: device.id,
+            ...info.coords,
+            timestamp: info.timestamp,
+          });
+          this.setState({detects});
+        },
+        (err: any) => {
+          console.log('Scan device -> location', err);
+        },
+        {enableHighAccuracy: false},
+      );
     });
 
     this.setState({intervalID});
@@ -116,11 +132,12 @@ export default class Tracking extends Component<{
     bleManager.stopDeviceScan();
 
     this.setState({started: false, status: 'finished'});
-    let {points, IDS} = this.state;
+    let {points, detects} = this.state;
+    console.log('Tracking -> stopTracking -> detects', detects);
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       points,
-      IDS,
+      detects,
     );
     console.log('Tracking -> stopTracking -> trajet', trajet);
   }
