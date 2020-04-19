@@ -1,4 +1,4 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   stepView: {
@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginTop: 20,
+  },
+  checkboxContainer: {
+    marginTop: 10,
+    backgroundColor: 'transparent',
   },
 });
 
