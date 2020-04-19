@@ -37,6 +37,27 @@ export default class Survey extends Component<{
     symptoms[index].checked = !symptoms[index].checked;
     this.setState({symptoms});
   };
+
+  handleNumberChange = (number: string) => {
+    this.setState({number});
+    if (number.match(/(06|07)[0-9]{8}$/g))
+      return this.setState({numberError: ''});
+
+    this.setState({numberError: 'Format invalide'});
+  };
+
+  submit = () => {
+    let data = {
+      age: this.state.age,
+      sexe: this.state.sexe,
+      symptomes: this.state.symptoms,
+      chronique: this.state.chronique,
+      maladie: this.state.maladie,
+      tousse_jours: this.state.days,
+      numero: this.state.number,
+    };
+    console.log('Survey -> submit -> data', data);
+  };
   render() {
     return this.state.loading ? (
       <Loading />
@@ -47,7 +68,7 @@ export default class Survey extends Component<{
           tapped={() => (this.props.navigation as any).toggleDrawer()}
         />
         <View style={{flex: 9}}>
-          <ProgressSteps activeStep={2}>
+          <ProgressSteps>
             <ProgressStep
               nextBtnDisabled={
                 !this.state.age ||
@@ -142,10 +163,21 @@ export default class Survey extends Component<{
             <ProgressStep
               label="Finalisation"
               previousBtnText="Précédent"
-              nextBtnDisabled={!this.state.number}
+              nextBtnDisabled={
+                this.state.numberError?.length > 0 || !this.state.number
+              }
+              onSubmit={this.submit}
               finishBtnText="Envoyer">
               <View style={styles.stepView}>
                 <Text style={styles.label}>Votre numero de telephone:</Text>
+                <Input
+                  onChangeText={this.handleNumberChange}
+                  placeholder="Numéro de téléphone"
+                  value={this.state.number}
+                  errorMessage={this.state.numberError}
+                  keyboardType="number-pad"
+                  containerStyle={{marginTop: 20}}
+                />
               </View>
             </ProgressStep>
           </ProgressSteps>
