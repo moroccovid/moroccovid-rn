@@ -19,7 +19,9 @@ export default class Details extends Component<{
       (this.props as any).route.params.trajet_id,
     );
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
-    console.log('Details -> componentDidMount -> trajet', trajet);
+
+    console.log('Trajet:');
+    console.log(JSON.stringify(trajet));
     this.setState({loading: false, trajet, location: trajet.locations[0]});
   }
 

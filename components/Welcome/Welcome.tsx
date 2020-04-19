@@ -15,25 +15,8 @@ import StorageManager from '../../managers/storage/manager';
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: true, number: null};
-  componentDidMount() {
-    this.checkNumber();
-    this.props.navigation.addListener('focus', () => {
-      this.checkNumber();
-    });
-  }
+  state: any = {loading: false};
 
-  checkNumber() {
-    StorageManager.prototype
-      .getData('number')
-      .then((number) => {
-        if (!number) return this.props.navigation.navigate('Login');
-        this.setState({loading: false, number});
-      })
-      .catch(() => {
-        this.props.navigation.navigate('Login');
-      });
-  }
   render() {
     return this.state.loading ? (
       <Loading />
@@ -51,7 +34,6 @@ export default class Welcome extends Component<{
             />
             <View
               style={{marginTop: 15, marginBottom: 50, alignItems: 'center'}}>
-              <Text style={styles.number}>{this.state.number}</Text>
               <Score score={3.5} />
             </View>
           </View>

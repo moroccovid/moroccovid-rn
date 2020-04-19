@@ -7,10 +7,21 @@ export default class TrackingManager {
     const connected = await ConnectivityManager.prototype.checkConnection();
     if (!connected) return false;
 
-    const trajet = await TrajetService.prototype.get(id);
-    const number = await StorageManager.prototype.getData('number');
+    const trajet: any = await TrajetService.prototype.get(id);
+    const mac = await StorageManager.prototype.getData('mac');
 
-    let data = {number, trajet};
+    trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
+
+    trajet.start = trajet.location[0];
+    trajet.end = trajet.location[trajet.location - 1];
+
+    delete trajet.locations;
+
+    let data = {mac, trajet};
+
+    console.log('TrackingManager -> data', data);
+
+    return false;
 
     let resp: AxiosResponse | void = await axios
       .post('https://moroccovid-tracking.herokuapp.com/', data)
