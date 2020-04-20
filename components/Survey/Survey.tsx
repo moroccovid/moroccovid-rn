@@ -12,7 +12,7 @@ import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
 import {Input, CheckBox} from 'react-native-elements';
 import colors from '../../theme/colors';
 import {ScrollView} from 'react-native-gesture-handler';
-import backendManager from '..?../../managers/backend/backendManager';
+import backendManager from '../../managers/backend/backendManager';
 export default class Survey extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
@@ -64,7 +64,7 @@ export default class Survey extends Component<{
     this.setState({numberError: 'Format invalide'});
   };
 
-  submit = () => {
+  submit = async () => {
     let data: any = {
       datetime: new Date().getTime(),
       age: this.state.age,
@@ -76,7 +76,7 @@ export default class Survey extends Component<{
     this.state.symptoms.forEach((el) => {
       data[el.label] = el.checked ? 1 : 0;
     });
-    // backendManager.
+    await backendManager.saveSurvey(data);
   };
   render() {
     return this.state.loading ? (

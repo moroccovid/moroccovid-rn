@@ -2,15 +2,15 @@ import deviceManager from '../device/deviceManager';
 import axios, {AxiosResponse} from 'axios';
 import env from '../../utils/env';
 import StorageManager from '../storage/manager';
-import jwtJsDecode from 'jwt-js-decode';
+import tokenUtils from './tokenUtils';
 
 export default {
   async auth(): Promise<string | null> {
     // check if there's already a token and check if its expired or not
     let token = await StorageManager.getData('token');
     if (token) {
-      let jwt = jwtJsDecode.jwtDecode(token);
-      console.log('jwt', jwt);
+      let jwt = tokenUtils.decode(token);
+      if (jwt.exp > new Date().getTime() / 1000) return token;
     }
 
     try {
@@ -72,6 +72,8 @@ export default {
       const mac = await deviceManager.getMac();
 
       const token = await this.auth();
+
+      survey.mac = mac;
 
       let resp: AxiosResponse = await axios.post(
         env.api_url + 'saveinvestigation/' + JSON.stringify(survey),
