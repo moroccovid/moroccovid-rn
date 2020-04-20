@@ -4,7 +4,7 @@ import {createConnection} from 'typeorm/browser';
 import {Alert} from 'react-native';
 import {Detect} from './entities/Detect';
 
-export default class DatabaseManager {
+export default {
   async connect() {
     try {
       return createConnection({
@@ -16,8 +16,7 @@ export default class DatabaseManager {
         entities: [Trajet, Location, Detect],
       });
     } catch (err) {
-      console.warn('DatabaseManager -> connect -> err', err);
-      Alert.alert('Erreur', 'Un erreur est survenu!');
+      console.log('DatabaseManager -> connect -> err', err);
     }
-  }
-}
+  },
+};

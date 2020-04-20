@@ -8,7 +8,7 @@ import backendManager from './managers/backend/backendManager';
 import ConnectivityManager from './managers/device/connectivity/manager';
 export default class App extends Component {
   async componentDidMount() {
-    DatabaseManager.prototype.connect();
+    DatabaseManager.connect();
 
     let connected = await ConnectivityManager.checkConnection();
     if (!connected) return;
