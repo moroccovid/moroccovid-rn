@@ -10,7 +10,6 @@ import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import StorageManager from '../../managers/storage/manager';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;

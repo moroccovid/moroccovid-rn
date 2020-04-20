@@ -19,8 +19,7 @@ export default class Login extends Component<{
   state: any = {loadingForm: false};
   submit(values: any) {
     this.setState({loadingForm: true});
-    StorageManager.prototype
-      .saveItem('number', values.number)
+    StorageManager.saveItem('number', values.number)
       .then(() => {
         this.setState({loadingForm: false});
         this.props.navigation.navigate('Drawer');

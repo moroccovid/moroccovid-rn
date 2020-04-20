@@ -18,7 +18,7 @@ const Drawer = createDrawerNavigator();
 export default class Tabs extends Component {
   state = {number: null};
   componentDidMount() {
-    StorageManager.prototype.getData('number').then((number) => {
+    StorageManager.getData('number').then((number) => {
       if (!number) return;
       this.setState({number});
     });
