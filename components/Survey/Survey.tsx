@@ -12,22 +12,40 @@ import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
 import {Input, CheckBox} from 'react-native-elements';
 import colors from '../../theme/colors';
 import {ScrollView} from 'react-native-gesture-handler';
+import backendManager from '..?../../managers/backend/backendManager';
 export default class Survey extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {
     loading: false,
     sexe: 'homme',
+    chronic: false,
     symptoms: [
-      {text: 'Difficulté à respirer', checked: false},
-      {text: 'Fièvre supérieure à 38 degrés', checked: false},
-      {text: "Maux d'estomac", checked: false},
-      {text: 'Douleurs musculaires', checked: false},
-      {text: 'Fatigue ou faiblesse importante', checked: false},
-      {text: 'Congestion nasale ou nez qui coule', checked: false},
-      {text: 'Inflammation de la gorge', checked: false},
-      {text: 'Toux sèche', checked: false},
-      {text: 'Toux Avec mucus', checked: false},
+      {
+        text: 'Difficulté à respirer',
+        checked: false,
+        label: 'difficultybreathing',
+      },
+      {text: 'Fièvre supérieure à 38 degrés', checked: false, label: 'fever'},
+      {text: "Maux d'estomac", checked: false, label: 'stomachache'},
+      {text: 'Douleurs musculaires', checked: false, label: 'muscleaches'},
+      {
+        text: 'Fatigue ou faiblesse importante',
+        checked: false,
+        label: 'weakness',
+      },
+      {
+        text: 'Congestion nasale ou nez qui coule',
+        checked: false,
+        label: 'nasal',
+      },
+      {
+        text: 'Inflammation de la gorge',
+        checked: false,
+        label: 'throatinflammation',
+      },
+      {text: 'Toux sèche', checked: false, label: 'drycough'},
+      {text: 'Toux Avec mucus', checked: false, label: 'coughmucus'},
     ],
   };
   componentDidMount() {}
@@ -47,16 +65,18 @@ export default class Survey extends Component<{
   };
 
   submit = () => {
-    let data = {
+    let data: any = {
+      datetime: new Date().getTime(),
       age: this.state.age,
       sexe: this.state.sexe,
-      symptomes: this.state.symptoms,
-      chronique: this.state.chronique,
-      maladie: this.state.maladie,
-      tousse_jours: this.state.days,
-      numero: this.state.number,
+      chronic: this.state.chronic ? 1 : 0,
+      coughduration: this.state.days,
+      phone: this.state.number,
     };
-    console.log('Survey -> submit -> data', data);
+    this.state.symptoms.forEach((el) => {
+      data[el.label] = el.checked ? 1 : 0;
+    });
+    // backendManager.
   };
   render() {
     return this.state.loading ? (
@@ -70,11 +90,7 @@ export default class Survey extends Component<{
         <View style={{flex: 9}}>
           <ProgressSteps>
             <ProgressStep
-              nextBtnDisabled={
-                !this.state.age ||
-                !this.state.sexe ||
-                (this.state.chronique && !this.state.maladie)
-              }
+              nextBtnDisabled={!this.state.age || !this.state.sexe}
               nextBtnText="Suivant"
               label="Information personel">
               <View style={styles.stepView}>
@@ -99,22 +115,11 @@ export default class Survey extends Component<{
                 <CheckBox
                   containerStyle={styles.checkboxContainer}
                   checkedColor={colors.primary}
-                  onPress={() =>
-                    this.setState({chronique: !this.state.chronique})
-                  }
+                  onPress={() => this.setState({chronic: !this.state.chronic})}
                   textStyle={{fontSize: 16, fontWeight: 'normal'}}
                   title="Avez-vous actuellement une maladie chronique?"
-                  checked={this.state.chronique}
+                  checked={this.state.chronic}
                 />
-
-                {this.state.chronique && (
-                  <Input
-                    onChangeText={(maladie) => this.setState({maladie})}
-                    placeholder="Votre maladie"
-                    value={this.state.maladie}
-                    containerStyle={{marginTop: 20}}
-                  />
-                )}
               </View>
             </ProgressStep>
             <ProgressStep

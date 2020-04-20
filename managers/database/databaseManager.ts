@@ -1,7 +1,6 @@
 import {Trajet} from './entities/Trajet';
 import {Location} from './entities/Location';
 import {createConnection} from 'typeorm/browser';
-import {Alert} from 'react-native';
 import {Detect} from './entities/Detect';
 
 export default {
