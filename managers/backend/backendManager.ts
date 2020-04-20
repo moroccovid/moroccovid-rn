@@ -67,7 +67,7 @@ export default {
       return false;
     }
   },
-  async saveSurvey(survey: any) {
+  async saveSurvey(survey: any): Promise<boolean> {
     try {
       const mac = await deviceManager.getMac();
 

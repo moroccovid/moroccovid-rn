@@ -1,23 +1,23 @@
 import React, {Component} from 'react';
-import {Text, View, Picker} from 'react-native';
+import {Text, View, Picker, ToastAndroid} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
   NavigationState,
   NavigationParams,
 } from 'react-navigation';
-import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
 import {Input, CheckBox} from 'react-native-elements';
 import colors from '../../theme/colors';
 import {ScrollView} from 'react-native-gesture-handler';
 import backendManager from '../../managers/backend/backendManager';
+import Success from './Success';
 export default class Survey extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {
-    loading: false,
+    success: false,
     sexe: 'homme',
     chronic: false,
     symptoms: [
@@ -48,7 +48,6 @@ export default class Survey extends Component<{
       {text: 'Toux Avec mucus', checked: false, label: 'coughmucus'},
     ],
   };
-  componentDidMount() {}
 
   toggleSymptom = (index: number) => {
     let {symptoms} = this.state;
@@ -73,14 +72,21 @@ export default class Survey extends Component<{
       coughduration: this.state.days,
       phone: this.state.number,
     };
-    this.state.symptoms.forEach((el) => {
+    this.state.symptoms.forEach((el: any) => {
       data[el.label] = el.checked ? 1 : 0;
     });
-    await backendManager.saveSurvey(data);
+    let success = await backendManager.saveSurvey(data);
+
+    if (success) return this.setState({success});
+
+    ToastAndroid.show(
+      'Une erreur est survenue, réessayez plus tard.',
+      ToastAndroid.LONG,
+    );
   };
   render() {
-    return this.state.loading ? (
-      <Loading />
+    return this.state.success ? (
+      <Success goHome={() => this.props.navigation.navigate('Home')} />
     ) : (
       <View style={{flex: 1}}>
         <Header
