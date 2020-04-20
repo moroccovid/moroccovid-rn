@@ -1,8 +1,7 @@
 import TrajetService from '../database/services/TrajetService';
 import StorageManager from '../storage/manager';
 import ConnectivityManager from '../device/connectivity/manager';
-import axios, {AxiosResponse, AxiosError} from 'axios';
-import env from '../../utils/env';
+import backendManager from '../backend/backendManager';
 export default class TrackingManager {
   async syncTrajet(id: number): Promise<boolean> {
     const connected = await ConnectivityManager.checkConnection();
@@ -21,13 +20,8 @@ export default class TrackingManager {
 
     let data = {mac, path};
 
-    let resp: AxiosResponse | void = await axios
-      .post(env.api_url + 'savepath', data)
-      .catch((err: AxiosError) => {
-        console.log('TrackingManager -> err', err);
-      });
-
-    console.log('TrackingManager -> resp', resp);
+    let success = await backendManager.savePath(data);
+    if (!success) return false;
 
     await TrajetService.prototype.synced(id);
     return true;

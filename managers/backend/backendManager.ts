@@ -37,4 +37,22 @@ export default {
       return false;
     }
   },
+
+  async savePath(path: any) {
+    try {
+      const token = await StorageManager.getData('token');
+      console.log('savePath -> token', token);
+      if (!token) return false;
+      let resp: AxiosResponse = await axios.post(
+        env.api_url + 'savepath/' + JSON.stringify(path),
+        {},
+        {headers: {Authorization: `jwt ${token}`}},
+      );
+      console.log('savePath -> resp', resp);
+      return true;
+    } catch (err) {
+      console.log('savePath -> err', err);
+      return false;
+    }
+  },
 };

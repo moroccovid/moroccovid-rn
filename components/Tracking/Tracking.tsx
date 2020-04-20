@@ -44,7 +44,6 @@ export default class Tracking extends Component<{
   }
 
   async startTracking() {
-    console.log('Tracking -> startTracking -> startTracking');
     this.createTrajet();
     this.setState({points: [], synced: false, syncing: false});
     this.watchLocation();
@@ -53,17 +52,12 @@ export default class Tracking extends Component<{
 
   async createTrajet() {
     const trajet_id = await TrajetService.prototype.create();
-    console.log('Tracking -> createTrajet -> trajet_id', trajet_id);
     this.setState({trajet_id});
   }
 
   async getLocation(enableHighAccuracy = true) {
     Geolocation.getCurrentPosition(
       (info: GeolocationResponse) => {
-        console.log(
-          'Tracking -> getLocation -> info',
-          `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
-        );
         ToastAndroid.show(
           `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
           ToastAndroid.SHORT,
@@ -98,7 +92,6 @@ export default class Tracking extends Component<{
 
     bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
       if (err || !device) return;
-      console.log('Tracking -> watchLocation -> device.id', device.id);
       let detects = this.state.detects as any[];
 
       // Cheking if we have already detected this device
@@ -133,13 +126,11 @@ export default class Tracking extends Component<{
 
     this.setState({started: false, status: 'finished'});
     let {points, detects} = this.state;
-    console.log('Tracking -> stopTracking -> detects', detects);
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       points,
       detects,
     );
-    console.log('Tracking -> stopTracking -> trajet', trajet);
   }
 
   goAgain() {

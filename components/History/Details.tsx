@@ -20,10 +20,6 @@ export default class Details extends Component<{
     );
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
 
-    console.log('Trajet:');
-    console.log(JSON.stringify(trajet));
-    console.log(trajet);
-
     this.setState({loading: false, trajet, location: trajet.locations[0]});
   }
 
