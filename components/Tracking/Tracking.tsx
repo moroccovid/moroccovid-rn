@@ -22,6 +22,7 @@ import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import TrackingManager from '../../managers/tracking/manager';
+import BackgroundTimer from 'react-native-background-timer';
 import {BleManager, Device} from 'react-native-ble-plx';
 
 export default class Tracking extends Component<{
@@ -87,7 +88,9 @@ export default class Tracking extends Component<{
 
   async watchLocation() {
     this.getLocation(true);
-    let intervalID = setInterval(() => this.getLocation(true), 7000);
+    BackgroundTimer.runBackgroundTimer(() => {
+      this.getLocation(true);
+    }, 7000);
     let bleManager = new BleManager();
 
     bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
@@ -113,13 +116,10 @@ export default class Tracking extends Component<{
         {enableHighAccuracy: false},
       );
     });
-
-    this.setState({intervalID});
   }
 
   async stopTracking() {
-    console.log('Tracking -> stopTracking -> stopTracking');
-    clearInterval(this.state.intervalID);
+    BackgroundTimer.stopBackgroundTimer();
 
     let bleManager = new BleManager();
     bleManager.stopDeviceScan();
