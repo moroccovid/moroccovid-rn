@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import styles from './style';
 import TrackingManager from '../../../managers/tracking/manager';
 import backendManager from '../../../managers/backend/backendManager';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default class Details extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -105,46 +106,48 @@ export default class Details extends Component<{
               <ActivityIndicator size="large" />
             </View>
           ) : (
-            <View style={{flex: 70, paddingTop: 20, paddingHorizontal: 20}}>
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Tous les contacts:</Text>
-                <View style={styles.contactContainer}>
-                  <Citizen color={colors.success} text="Vous" />
-                  <Arrow />
-                  <Citizen color="purple" text="Indiviu" />
+            <View style={{flex: 70, paddingTop: 20}}>
+              <ScrollView style={{paddingHorizontal: 20}}>
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>Tous les contacts:</Text>
+                  <View style={styles.contactContainer}>
+                    <Citizen color={colors.success} text="Vous" />
+                    <Arrow />
+                    <Citizen color="purple" text="Indiviu" />
+                  </View>
+                  <Text style={{textAlign: 'center', fontSize: 20}}>
+                    {this.state.stats.totalContacts} contacts
+                  </Text>
                 </View>
-                <Text style={{textAlign: 'center', fontSize: 20}}>
-                  {this.state.stats.totalContacts} contacts
-                </Text>
-              </View>
 
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>
-                  Contacts avec des personnes infectées:
-                </Text>
-                <View style={styles.contactContainer}>
-                  <Citizen color={colors.success} text="Vous" />
-                  <Arrow />
-                  <Citizen color={colors.danger} text="Infecté" />
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>
+                    Contacts avec des personnes infectées:
+                  </Text>
+                  <View style={styles.contactContainer}>
+                    <Citizen color={colors.success} text="Vous" />
+                    <Arrow />
+                    <Citizen color={colors.danger} text="Infecté" />
+                  </View>
+                  <Text style={{textAlign: 'center', fontSize: 20}}>
+                    {this.state.stats.infectedContacts} contacts
+                  </Text>
                 </View>
-                <Text style={{textAlign: 'center', fontSize: 20}}>
-                  {this.state.stats.infectedContacts} contacts
-                </Text>
-              </View>
 
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>
-                  Contacts avec des suspects:
-                </Text>
-                <View style={styles.contactContainer}>
-                  <Citizen color={colors.success} text="Vous" />
-                  <Arrow />
-                  <Citizen color="orange" text="Suspect" />
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>
+                    Contacts avec des suspects:
+                  </Text>
+                  <View style={styles.contactContainer}>
+                    <Citizen color={colors.success} text="Vous" />
+                    <Arrow />
+                    <Citizen color="orange" text="Suspect" />
+                  </View>
+                  <Text style={{textAlign: 'center', fontSize: 20}}>
+                    {this.state.stats.suspectContacts} contacts
+                  </Text>
                 </View>
-                <Text style={{textAlign: 'center', fontSize: 20}}>
-                  {this.state.stats.suspectContacts} contacts
-                </Text>
-              </View>
+              </ScrollView>
             </View>
           )}
           <View style={{flex: 5, flexDirection: 'row'}}>
