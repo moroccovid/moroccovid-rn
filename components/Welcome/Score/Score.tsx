@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../../../theme/colors';
+import {Tooltip} from 'react-native-elements';
 
 export default class Score extends Component<{score: number}> {
   getStars() {
@@ -27,12 +28,24 @@ export default class Score extends Component<{score: number}> {
   }
   render() {
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        {this.getStars()}
+      <View style={{alignItems: 'center'}}>
+        <Tooltip
+          height={100}
+          width={200}
+          popover={
+            <Text style={{color: 'white'}}>
+              Cela indique la probabilité que vous ayez attrapé le virus, 5
+              étoiles signifie aucun risque.
+            </Text>
+          }>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            {this.getStars()}
+          </View>
+        </Tooltip>
       </View>
     );
   }
