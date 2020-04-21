@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, ToastAndroid} from 'react-native';
+import {Text, View, ToastAndroid, Alert, ActivityIndicator} from 'react-native';
 import {
   NavigationScreenProp,
   NavigationState,
@@ -14,6 +14,7 @@ import {Button} from 'react-native-elements';
 import dayjs from 'dayjs';
 import styles from './style';
 import TrackingManager from '../../../managers/tracking/manager';
+import backendManager from '../../../managers/backend/backendManager';
 
 export default class Details extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -25,16 +26,28 @@ export default class Details extends Component<{
   }
 
   refresh = async () => {
-    const trajet = await TrajetService.prototype.get(
-      (this.props as any).route.params.trajet_id,
-    );
+    let id = (this.props as any).route.params.trajet_id;
+    const trajet = await TrajetService.prototype.get(id);
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
     console.log('Details -> componentDidMount -> trajet', trajet);
-
-    this.setState({loading: false, trajet, location: trajet.locations[0]});
+    this.setState({loading: false, trajet, statsLoading: true});
+    let stats = await backendManager.path.getStats(trajet.cloudID);
+    console.log('Details -> refresh -> stats', stats);
+    this.setState({statsLoading: false, stats});
   };
 
-  delete = () => {};
+  delete = () => {
+    let id = this.state.trajet.id;
+    let supprimer = async () => {
+      const service = new TrajetService();
+      await service.delete(id);
+      await this.props.navigation.navigate('History');
+    };
+    Alert.alert('Confirmation', `Voulez-vous supprimer le trajet #${id}?`, [
+      {text: 'Oui', onPress: supprimer},
+      {text: 'Annuler'},
+    ]);
+  };
 
   sync = async () => {
     this.setState({syncing: true});
@@ -82,6 +95,15 @@ export default class Details extends Component<{
                 Synchronise le trajet pour avoir les resultats
               </Text>
             </View>
+          ) : this.state.statsLoading ? (
+            <View
+              style={{
+                flex: 70,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="large" />
+            </View>
           ) : (
             <View style={{flex: 70, paddingTop: 20, paddingHorizontal: 20}}>
               <View style={styles.card}>
@@ -92,7 +114,7 @@ export default class Details extends Component<{
                   <Citizen color="purple" text="Indiviu" />
                 </View>
                 <Text style={{textAlign: 'center', fontSize: 20}}>
-                  7 contacts
+                  {this.state.stats.totalContacts} contacts
                 </Text>
               </View>
 
@@ -106,7 +128,7 @@ export default class Details extends Component<{
                   <Citizen color={colors.danger} text="Infecté" />
                 </View>
                 <Text style={{textAlign: 'center', fontSize: 20}}>
-                  0 contacts
+                  {this.state.stats.infectedContacts} contacts
                 </Text>
               </View>
 
@@ -120,7 +142,7 @@ export default class Details extends Component<{
                   <Citizen color="orange" text="Suspect" />
                 </View>
                 <Text style={{textAlign: 'center', fontSize: 20}}>
-                  2 contacts
+                  {this.state.stats.suspectContacts} contacts
                 </Text>
               </View>
             </View>
