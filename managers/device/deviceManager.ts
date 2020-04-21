@@ -8,7 +8,7 @@ export default {
     let macSynced = await StorageManager.getData('macSynced');
 
     let saveCitizen = async (mac: string) => {
-      let success = await backendManager.saveCitizen(mac);
+      let success = await backendManager.citizen.saveCitizen(mac);
       if (success) StorageManager.saveItem('macSynced', 'true');
     };
 
@@ -18,6 +18,7 @@ export default {
       await saveCitizen(mac);
     } else if (mac && !macSynced) await saveCitizen(mac);
 
+    console.log('mac', mac);
     return mac;
   },
 };

@@ -10,11 +10,17 @@ import Loading from '../utils/Loading/Loading';
 import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import backendManager from '../../managers/backend/backendManager';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: false};
+  state: any = {loading: true};
+
+  async componentDidMount() {
+    const score = await backendManager.citizen.getScore();
+    this.setState({score, loading: false});
+  }
 
   render() {
     return this.state.loading ? (
@@ -33,7 +39,7 @@ export default class Welcome extends Component<{
             />
             <View
               style={{marginTop: 15, marginBottom: 50, alignItems: 'center'}}>
-              <Score score={3.5} />
+              <Score score={this.state.score} />
             </View>
           </View>
           <View style={{flex: 44, width: '100%'}}>

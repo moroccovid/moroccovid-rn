@@ -75,7 +75,7 @@ export default class Survey extends Component<{
     this.state.symptoms.forEach((el: any) => {
       data[el.label] = el.checked ? 1 : 0;
     });
-    let success = await backendManager.saveSurvey(data);
+    let success = await backendManager.survey.saveSurvey(data);
 
     if (success) return this.setState({success});
 
