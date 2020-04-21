@@ -8,9 +8,27 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
+    alignSelf: 'center',
   },
-  number: {
+  title: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: 'gray',
+    textAlign: 'center',
+  },
+  btn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    marginTop: 10,
   },
   menu: {
     flexDirection: 'row',

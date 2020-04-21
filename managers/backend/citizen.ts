@@ -48,4 +48,25 @@ export default {
       return score ? parseFloat(score) : 5;
     }
   },
+
+  async getStats(): Promise<any> {
+    try {
+      const token = await backendManager.auth();
+      const mac = await deviceManager.getMac();
+
+      let resp: AxiosResponse = await axios.get(
+        env.api_url + 'getSatatsPerDay/' + mac,
+        {headers: {Authorization: `jwt ${token}`}},
+      );
+      console.log('resp', resp);
+      return {
+        infected: resp.data.resultat.tabinfected,
+        suspect: resp.data.resultat.tabsuspect,
+        nonInfected: resp.data.resultat.tabnoninfected,
+      };
+    } catch (err) {
+      console.log('err', err);
+      return null;
+    }
+  },
 };

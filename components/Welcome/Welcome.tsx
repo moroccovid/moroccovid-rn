@@ -11,6 +11,7 @@ import Header from '../utils/Header/Header';
 import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import backendManager from '../../managers/backend/backendManager';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -39,7 +40,18 @@ export default class Welcome extends Component<{
             />
             <View
               style={{marginTop: 15, marginBottom: 50, alignItems: 'center'}}>
+              <Text style={styles.title}>Votre score:</Text>
               <Score score={this.state.score} />
+              <Text style={styles.subtitle}>
+                Cela indique le niveau de risque auquel vous êtes exposé, plus
+                le score est faible, plus le risque est élevé.
+              </Text>
+              <TouchableOpacity style={styles.btn}>
+                <Icon name="chart-bar" size={20} />
+                <Text style={{fontSize: 16, marginLeft: 10}}>
+                  Plus de statistiques
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={{flex: 44, width: '100%'}}>
