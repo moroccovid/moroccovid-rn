@@ -3,13 +3,13 @@ import React, {Component} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import customDrawer from './CustomDrawer/CustomDrawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Welcome from '../components/Welcome/Welcome';
 import Survey from '../components/Survey/Survey';
 import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
 import HistoryStack from '../components/History/Stack';
+import WelcomeStack from '../components/Welcome/WelcomeStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -41,7 +41,7 @@ export default class Tabs extends Component {
             drawerIcon: (args: any) => this.getIcon(args, 'home'),
           }}
           name="Home"
-          component={Welcome}
+          component={WelcomeStack}
         />
         <Drawer.Screen
           options={{

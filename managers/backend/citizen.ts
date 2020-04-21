@@ -1,3 +1,4 @@
+import {Alert} from 'react-native';
 import axios, {AxiosResponse} from 'axios';
 import env from '../../utils/env';
 import StorageManager from '../storage/manager';
@@ -66,6 +67,7 @@ export default {
       };
     } catch (err) {
       console.log('err', err);
+      Alert.alert('Error at citizen getstats', JSON.stringify(err));
       return null;
     }
   },

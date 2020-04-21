@@ -46,7 +46,9 @@ export default class Welcome extends Component<{
                 Cela indique le niveau de risque auquel vous êtes exposé, plus
                 le score est faible, plus le risque est élevé.
               </Text>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Stats')}
+                style={styles.btn}>
                 <Icon name="chart-bar" size={20} />
                 <Text style={{fontSize: 16, marginLeft: 10}}>
                   Plus de statistiques

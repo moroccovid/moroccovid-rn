@@ -5,6 +5,7 @@ import tokenUtils from './tokenUtils';
 import citizen from './citizen';
 import path from './path';
 import survey from './survey';
+import {Alert} from 'react-native';
 
 export default {
   citizen,
@@ -30,6 +31,7 @@ export default {
       return resp.data.access_token;
     } catch (err) {
       console.log('auth -> err', err);
+      Alert.alert('Error at auth', JSON.stringify(err));
       return null;
     }
   },

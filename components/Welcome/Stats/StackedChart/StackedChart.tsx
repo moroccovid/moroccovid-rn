@@ -3,9 +3,12 @@ import {Text, View, Dimensions} from 'react-native';
 import {StackedBarChart} from 'react-native-chart-kit';
 import backendManager from '../../../../managers/backend/backendManager';
 import dayjs from 'dayjs';
+import fr from 'dayjs/locale/fr';
 import {ActivityIndicator} from 'react-native';
 
-export default class Chart extends React.Component {
+dayjs.locale(fr);
+
+export default class StackedChart extends React.Component {
   state: any = {data: [], loading: true};
   async componentDidMount() {
     let stats = await backendManager.citizen.getStats();
@@ -17,7 +20,7 @@ export default class Chart extends React.Component {
       labels.push(
         dayjs()
           .add(i - 7, 'day')
-          .format('DD'),
+          .format('dd'),
       );
       data.data.push([
         stats.nonInfected[i] + Math.ceil(Math.random() * 5),
@@ -32,32 +35,23 @@ export default class Chart extends React.Component {
     return this.state.loading ? (
       <ActivityIndicator size="large" />
     ) : (
-      <View
-        style={{
-          padding: 20,
+      <StackedBarChart
+        width={Dimensions.get('screen').width - 20}
+        height={300}
+        data={this.state.data}
+        chartConfig={{
+          propsForBackgroundLines: {
+            stroke: 0,
+          },
+          barPercentage: 0.8,
           backgroundColor: 'white',
-          borderRadius: 20,
-          margin: 10,
-          alignItems: 'center',
-        }}>
-        <StackedBarChart
-          width={Dimensions.get('screen').width - 20}
-          height={300}
-          data={this.state.data}
-          chartConfig={{
-            propsForBackgroundLines: {
-              stroke: 0,
-            },
-            barPercentage: 0.8,
-            backgroundColor: 'white',
-            backgroundGradientFrom: 'white',
-            backgroundGradientTo: 'white',
-            style: {padding: 20},
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          hideLegend={true}
-        />
-      </View>
+          backgroundGradientFrom: 'white',
+          backgroundGradientTo: 'white',
+          style: {padding: 20},
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        hideLegend={true}
+      />
     );
   }
 }

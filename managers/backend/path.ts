@@ -17,6 +17,7 @@ export default {
       return resp.data.id;
     } catch (err) {
       console.log('savePath -> err', err);
+      Alert.alert('Error at citizen getstats', JSON.stringify(err));
       return '';
     }
   },

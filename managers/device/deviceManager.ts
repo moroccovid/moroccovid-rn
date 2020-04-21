@@ -1,6 +1,7 @@
 import StorageManager from '../storage/manager';
 import {getMacAddress} from 'react-native-device-info';
 import backendManager from '../backend/backendManager';
+import {ToastAndroid} from 'react-native';
 
 export default {
   async getMac(): Promise<string> {
@@ -19,6 +20,7 @@ export default {
     } else if (mac && !macSynced) await saveCitizen(mac);
 
     console.log('mac', mac);
+    ToastAndroid.show(mac, ToastAndroid.LONG);
     return mac;
   },
 };
