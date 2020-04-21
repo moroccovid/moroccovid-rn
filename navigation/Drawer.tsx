@@ -4,25 +4,17 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import customDrawer from './CustomDrawer/CustomDrawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Welcome from '../components/Welcome/Welcome';
-import History from '../components/History/History';
 import Survey from '../components/Survey/Survey';
 import Settings from '../components/Settings/Settings';
 import About from '../components/About/About';
 import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
-import StorageManager from '../managers/storage/manager';
 import HistoryStack from '../components/History/Stack';
 
 const Drawer = createDrawerNavigator();
 
 export default class Tabs extends Component {
   state = {number: null};
-  componentDidMount() {
-    StorageManager.getData('number').then((number) => {
-      if (!number) return;
-      this.setState({number});
-    });
-  }
   getIcon({color, size}: any, name: string) {
     return (
       <Icon
@@ -42,7 +34,7 @@ export default class Tabs extends Component {
     return (
       <Drawer.Navigator
         initialRouteName="Home"
-        drawerContent={(props: any) => customDrawer(props, this.state.number)}>
+        drawerContent={(props: any) => customDrawer(props)}>
         <Drawer.Screen
           options={{
             title: 'Accueil',
