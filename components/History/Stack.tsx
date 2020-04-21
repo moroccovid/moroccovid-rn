@@ -6,7 +6,7 @@ import {
   NavigationParams,
 } from 'react-navigation';
 import History from './History';
-import Details from './Details';
+import Details from './Details/Details';
 const Stack = createStackNavigator();
 
 export default class HistoryStack extends Component<{

@@ -2,10 +2,14 @@ import TrajetService from '../database/services/TrajetService';
 import StorageManager from '../storage/manager';
 import ConnectivityManager from '../device/connectivity/manager';
 import backendManager from '../backend/backendManager';
+import {ToastAndroid} from 'react-native';
 export default class TrackingManager {
   async syncTrajet(id: number): Promise<boolean> {
     const connected = await ConnectivityManager.checkConnection();
-    if (!connected) return false;
+    if (!connected) {
+      ToastAndroid.show('Pas de connexion Internet', ToastAndroid.LONG);
+      return false;
+    }
 
     const trajet = await TrajetService.prototype.get(id);
     const mac = await StorageManager.getData('mac');
