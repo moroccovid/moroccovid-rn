@@ -100,9 +100,9 @@ export default class TrajetService {
     return trajet;
   }
 
-  async synced(id: number) {
+  async synced(id: number, cloudID: string) {
     let trajet = await this.get(id);
-    trajet.synced = true;
+    trajet.cloudID = cloudID;
     await getRepository(Trajet).save(trajet);
   }
 }

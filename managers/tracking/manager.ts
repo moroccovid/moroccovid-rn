@@ -20,10 +20,10 @@ export default class TrackingManager {
 
     let data = {mac, path};
 
-    let success = await backendManager.path.savePath(data);
-    if (!success) return false;
+    let cloudID = await backendManager.path.savePath(data);
+    if (cloudID.length === 0) return false;
 
-    await TrajetService.prototype.synced(id);
+    await TrajetService.prototype.synced(id, cloudID);
     return true;
   }
 }

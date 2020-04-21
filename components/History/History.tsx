@@ -100,7 +100,7 @@ export default class History extends Component<{
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   {(trajet as any).syncing ? (
                     <ActivityIndicator />
-                  ) : !trajet.synced ? (
+                  ) : !trajet.cloudID ? (
                     <TouchableOpacity
                       onPress={() => this.syncTrajets(trajet.id, i)}>
                       <Icon

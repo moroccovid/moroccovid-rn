@@ -12,8 +12,8 @@ export class Trajet {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('boolean', {default: false})
-  synced: boolean;
+  @Column('varchar', {nullable: true})
+  cloudID: string;
 
   @OneToMany((type) => Location, (location) => location.trajet)
   locations: Location[];

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, Picker, ToastAndroid} from 'react-native';
+import {Text, View, ToastAndroid} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
@@ -13,6 +13,8 @@ import colors from '../../theme/colors';
 import {ScrollView} from 'react-native-gesture-handler';
 import backendManager from '../../managers/backend/backendManager';
 import Success from './Success';
+import {Picker} from '@react-native-community/picker';
+
 export default class Survey extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
@@ -146,6 +148,7 @@ export default class Survey extends Component<{
                 <ScrollView>
                   {this.state.symptoms.map((symp: any, index: number) => (
                     <CheckBox
+                      key={index}
                       title={symp.text}
                       checked={symp.checked}
                       containerStyle={styles.checkboxContainer}
