@@ -12,6 +12,7 @@ import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import backendManager from '../../managers/backend/backendManager';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import HistoryStack from 'components/History/Stack';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -19,6 +20,19 @@ export default class Welcome extends Component<{
   state: any = {loading: true};
 
   async componentDidMount() {
+    this.refresh();
+    this.props.navigation.addListener('focus', () => {
+      let score = (this.props as any).route?.params?.score;
+      if (score) {
+        console.log('Welcome -> componentDidMount -> score', score);
+        this.setState({score});
+      }
+    });
+  }
+
+  async refresh() {
+    console.log('Refreshing..');
+    this.setState({loading: true});
     const score = await backendManager.citizen.getScore();
     this.setState({score, loading: false});
   }

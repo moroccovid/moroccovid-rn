@@ -38,15 +38,31 @@ export default {
         env.api_url + 'getLastScore/' + mac,
         {headers: {Authorization: `jwt ${token}`}},
       );
-      console.log('getScore -> resp', resp);
 
       await StorageManager.saveItem('score', resp.data.score + '');
 
       return resp.data.score;
     } catch (err) {
-      console.log('getScore -> err', err);
+      console.error('getScore -> err', err);
       let score = await StorageManager.getData('score');
       return score ? parseFloat(score) : 5;
+    }
+  },
+
+  async setScore(score: number): Promise<boolean> {
+    try {
+      const token = await backendManager.auth();
+      const mac = await deviceManager.getMac();
+
+      let resp: AxiosResponse = await axios.get(
+        env.api_url + `evaluateScoreByCitizen/${mac}/${score}`,
+        {headers: {Authorization: `jwt ${token}`}},
+      );
+
+      return true;
+    } catch (err) {
+      console.log('err', err);
+      return false;
     }
   },
 
