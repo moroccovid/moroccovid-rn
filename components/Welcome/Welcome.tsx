@@ -24,7 +24,7 @@ export default class Welcome extends Component<{
     this.refresh();
     this.checkNumber();
     this.props.navigation.addListener('focus', () => {
-      if ((this.props as any).route?.params?.reload) this.refresh();
+      if ((this.props as any).route?.params?.reload) this.refresh;
     });
   }
 
