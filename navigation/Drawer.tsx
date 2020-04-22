@@ -10,6 +10,7 @@ import Tracking from '../components/Tracking/Tracking';
 import Terms from '../components/Terms/Terms';
 import HistoryStack from '../components/History/Stack';
 import WelcomeStack from '../components/Welcome/WelcomeStack';
+import Report from '../components/Report/Report';
 
 const Drawer = createDrawerNavigator();
 
@@ -58,6 +59,14 @@ export default class Tabs extends Component {
           }}
           name="History"
           component={HistoryStack}
+        />
+        <Drawer.Screen
+          options={{
+            title: 'Report',
+            drawerIcon: (args: any) => this.getIcon(args, 'exclamation'),
+          }}
+          name="Report"
+          component={Report}
         />
         <Drawer.Screen
           options={{

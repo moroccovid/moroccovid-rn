@@ -20,7 +20,6 @@ export default {
     } else if (mac && !macSynced) await saveCitizen(mac);
 
     console.log('mac', mac);
-    ToastAndroid.show(mac, ToastAndroid.LONG);
     return mac;
   },
 };

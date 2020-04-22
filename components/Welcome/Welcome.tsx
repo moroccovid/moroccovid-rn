@@ -33,7 +33,7 @@ export default class Welcome extends Component<{
           title="Acceuil"
         />
         <View style={styles.wrapper}>
-          <View style={{flex: 55}}>
+          <View style={{flex: 70}}>
             <Image
               style={styles.logo}
               source={require('../../assets/logo256.png')}
@@ -56,7 +56,7 @@ export default class Welcome extends Component<{
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{flex: 44, width: '100%'}}>
+          <View style={{flex: 30, width: '100%'}}>
             <View style={styles.menu}>
               <View style={styles.col}>
                 <TouchableOpacity
