@@ -126,13 +126,13 @@ export default class Welcome extends Component<{
                   <Text style={styles.menuText}>Questionnaire</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('About')}
+                  onPress={() => this.props.navigation.navigate('Report')}
                   style={styles.menuButton}>
                   <Image
                     style={styles.menuItem}
-                    source={require('../../assets/menu/question.png')}
+                    source={require('../../assets/menu/caution.png')}
                   />
-                  <Text style={styles.menuText}>A propos de nous</Text>
+                  <Text style={styles.menuText}>Report</Text>
                 </TouchableOpacity>
               </View>
             </View>
