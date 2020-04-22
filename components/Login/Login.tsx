@@ -1,32 +1,37 @@
 import React, {Component, Fragment} from 'react';
-import {Text, View, Image} from 'react-native';
+import {Text, View, Image, ToastAndroid} from 'react-native';
 import styles from './style';
 import {
   NavigationScreenProp,
   NavigationState,
   NavigationParams,
 } from 'react-navigation';
-import Loading from '../utils/Loading/Loading';
 import {Input, Button} from 'react-native-elements';
 import colors from '../../theme/colors';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import StorageManager from '../../managers/storage/storageManager';
+import backendManager from '../../managers/backend/backendManager';
 
 export default class Login extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
   state: any = {loadingForm: false};
-  submit(values: any) {
+  async submit(values: any) {
     this.setState({loadingForm: true});
-    StorageManager.saveItem('number', values.number)
-      .then(() => {
-        this.setState({loadingForm: false});
-        this.props.navigation.navigate('Drawer');
-      })
-      .catch((err: any) => {
-        console.warn(err);
-      });
+
+    let success = await backendManager.citizen.saveNumber(values.number);
+    if (!success) {
+      this.setState({loadingForm: false});
+      return ToastAndroid.show('Une erreur est survenue!', ToastAndroid.LONG);
+    }
+
+    await StorageManager.saveItem('number', values.number).catch((err: any) => {
+      console.warn(err);
+    });
+
+    this.setState({loadingForm: false});
+    this.props.navigation.navigate('Drawer');
   }
   render() {
     return (

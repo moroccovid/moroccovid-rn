@@ -31,6 +31,23 @@ export default {
     }
   },
 
+  async saveNumber(number: string) {
+    try {
+      const token = await backendManager.auth();
+      const mac = await deviceManager.getMac();
+
+      let resp: AxiosResponse = await axios.get(
+        env.api_url + `setPhone/${mac}/${number}`,
+        {headers: {Authorization: `jwt ${token}`}},
+      );
+      console.log('saveNumber -> resp', resp);
+      return true;
+    } catch (err) {
+      console.log('saveNumber -> err', err);
+      return false;
+    }
+  },
+
   async getScore(): Promise<number> {
     try {
       const token = await backendManager.auth();

@@ -57,11 +57,11 @@ export default class Details extends Component<{
     );
     if (!success) {
       this.refresh();
-      this.setState({syncing: true});
+      this.setState({syncing: false});
       return;
     }
     ToastAndroid.show('Trajet synchronisé', ToastAndroid.SHORT);
-    this.setState({syncing: true});
+    this.setState({syncing: false});
     this.refresh();
   };
 
