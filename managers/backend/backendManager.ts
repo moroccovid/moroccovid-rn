@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosResponse, AxiosError} from 'axios';
 import env from '../../utils/env';
 import StorageManager from '../storage/manager';
 import tokenUtils from './tokenUtils';
@@ -30,8 +30,7 @@ export default {
       StorageManager.saveItem('token', resp.data.access_token);
       return resp.data.access_token;
     } catch (err) {
-      console.log('auth -> err', err);
-      Alert.alert('Error at auth', JSON.stringify(err));
+      console.log('auth -> err', err as AxiosError);
       return null;
     }
   },

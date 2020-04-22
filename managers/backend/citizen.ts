@@ -16,6 +16,7 @@ export default {
           JSON.stringify({
             mac,
             score: [{value: '5', datetime: new Date().getTime()}],
+            phone: '',
             datetime: new Date().getTime(),
           }),
         {},

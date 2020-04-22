@@ -7,6 +7,7 @@ import {Detect} from '../entities/Detect';
 export default class TrajetService {
   async create(): Promise<number> {
     const trajet = new Trajet();
+    trajet.start = new Date().getTime();
     const repo = getRepository(Trajet);
 
     await repo.save(trajet);
@@ -67,7 +68,7 @@ export default class TrajetService {
       trajet.min_speed = Math.min(...points.map((point) => point.speed));
       trajet.max_speed = Math.max(...points.map((point) => point.speed));
 
-      trajet.start = Math.min(...points.map((point) => point.timestamp));
+      // trajet.start = Math.min(...points.map((point) => point.timestamp));
       trajet.end = Math.max(...points.map((point) => point.timestamp));
 
       delete trajet.locations;
