@@ -1,5 +1,5 @@
 import TrajetService from '../database/services/TrajetService';
-import StorageManager from '../storage/manager';
+import StorageManager from '../storage/storageManager';
 import ConnectivityManager from '../device/connectivity/connectivityManager';
 import backendManager from '../backend/backendManager';
 import {ToastAndroid} from 'react-native';

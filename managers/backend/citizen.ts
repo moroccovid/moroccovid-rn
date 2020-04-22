@@ -1,7 +1,7 @@
 import {Alert} from 'react-native';
 import axios, {AxiosResponse} from 'axios';
 import env from '../../utils/env';
-import StorageManager from '../storage/manager';
+import StorageManager from '../storage/storageManager';
 import backendManager from './backendManager';
 import deviceManager from '../device/deviceManager';
 import connectivityManager from '../device/connectivity/connectivityManager';

@@ -11,7 +11,7 @@ import {Input, Button} from 'react-native-elements';
 import colors from '../../theme/colors';
 import * as yup from 'yup';
 import {Formik} from 'formik';
-import StorageManager from '../../managers/storage/manager';
+import StorageManager from '../../managers/storage/storageManager';
 
 export default class Login extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;

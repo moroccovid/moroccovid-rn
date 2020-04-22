@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import env from '../../utils/env';
-import StorageManager from '../storage/manager';
+import StorageManager from '../storage/storageManager';
 import backendManager from './backendManager';
 
 export default {

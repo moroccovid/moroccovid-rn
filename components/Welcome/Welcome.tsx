@@ -12,21 +12,19 @@ import Score from './Score/Score';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import backendManager from '../../managers/backend/backendManager';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import HistoryStack from 'components/History/Stack';
+import storageManager from '../../managers/storage/storageManager';
+import Popup from './Popup/Popup';
 
 export default class Welcome extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }> {
-  state: any = {loading: true};
+  state: any = {loading: true, showOverlay: false};
 
   async componentDidMount() {
     this.refresh();
+    this.checkNumber();
     this.props.navigation.addListener('focus', () => {
-      let score = (this.props as any).route?.params?.score;
-      if (score) {
-        console.log('Welcome -> componentDidMount -> score', score);
-        this.setState({score});
-      }
+      if ((this.props as any).route?.params?.reload) this.refresh();
     });
   }
 
@@ -35,6 +33,12 @@ export default class Welcome extends Component<{
     this.setState({loading: true});
     const score = await backendManager.citizen.getScore();
     this.setState({score, loading: false});
+  }
+
+  async checkNumber() {
+    const number = await storageManager.getData('number');
+    if (!number) return this.setState({showOverlay: true});
+    this.setState({number});
   }
 
   render() {
@@ -139,6 +143,14 @@ export default class Welcome extends Component<{
           </View>
         </View>
         <View style={{flex: 1}}></View>
+        <Popup
+          showOverlay={this.state.showOverlay}
+          goTo={(path: string) => {
+            this.setState({showOverlay: false});
+            this.props.navigation.navigate(path);
+          }}
+          cancel={() => this.setState({showOverlay: false})}
+        />
       </View>
     );
   }

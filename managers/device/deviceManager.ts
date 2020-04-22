@@ -1,4 +1,4 @@
-import StorageManager from '../storage/manager';
+import StorageManager from '../storage/storageManager';
 import {getMacAddress} from 'react-native-device-info';
 import backendManager from '../backend/backendManager';
 import {ToastAndroid} from 'react-native';

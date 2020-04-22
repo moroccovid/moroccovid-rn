@@ -37,7 +37,7 @@ export default class Report extends Component<{
 
     const success = await backendManager.citizen.setScore(score);
     if (success) {
-      this.props.navigation.navigate('Welcome', {score});
+      this.props.navigation.navigate('Welcome', {reload: true});
       ToastAndroid.show('Merci pour votre report!', ToastAndroid.LONG);
     } else {
       ToastAndroid.show('Une erreur est survenue!', ToastAndroid.LONG);

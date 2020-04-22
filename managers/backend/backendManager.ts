@@ -1,6 +1,6 @@
 import axios, {AxiosResponse, AxiosError} from 'axios';
 import env from '../../utils/env';
-import StorageManager from '../storage/manager';
+import StorageManager from '../storage/storageManager';
 import tokenUtils from './tokenUtils';
 import citizen from './citizen';
 import path from './path';
