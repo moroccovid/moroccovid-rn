@@ -1,6 +1,6 @@
 import TrajetService from '../database/services/TrajetService';
 import StorageManager from '../storage/manager';
-import ConnectivityManager from '../device/connectivity/manager';
+import ConnectivityManager from '../device/connectivity/connectivityManager';
 import backendManager from '../backend/backendManager';
 import {ToastAndroid} from 'react-native';
 export default class TrackingManager {

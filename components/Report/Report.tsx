@@ -35,14 +35,14 @@ export default class Report extends Component<{
 
     let score = this.state.selected == 1 ? 5 : this.state.selected == 2 ? 3 : 0;
 
-    const success = backendManager.citizen.setScore(score);
+    const success = await backendManager.citizen.setScore(score);
     if (success) {
       this.props.navigation.navigate('Welcome', {score});
       ToastAndroid.show('Merci pour votre report!', ToastAndroid.LONG);
     } else {
       ToastAndroid.show('Une erreur est survenue!', ToastAndroid.LONG);
     }
-    this.setState({sending: true});
+    this.setState({sending: false});
   };
 
   render() {

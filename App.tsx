@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import Navigator from './navigation/Navigator';
 import DatabaseManager from './managers/database/databaseManager';
 import backendManager from './managers/backend/backendManager';
-import ConnectivityManager from './managers/device/connectivity/manager';
+import ConnectivityManager from './managers/device/connectivity/connectivityManager';
 import deviceManager from './managers/device/deviceManager';
 export default class App extends Component {
   async componentDidMount() {

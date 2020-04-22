@@ -4,6 +4,7 @@ import env from '../../utils/env';
 import StorageManager from '../storage/manager';
 import backendManager from './backendManager';
 import deviceManager from '../device/deviceManager';
+import connectivityManager from '../device/connectivity/connectivityManager';
 
 export default {
   async saveCitizen(mac: string) {
@@ -44,13 +45,15 @@ export default {
 
       return resp.data.score;
     } catch (err) {
-      console.error('getScore -> err', err);
       let score = await StorageManager.getData('score');
       return score ? parseFloat(score) : 5;
     }
   },
 
   async setScore(score: number): Promise<boolean> {
+    let connected = await connectivityManager.checkConnection();
+    if (!connected) return false;
+
     try {
       const token = await backendManager.auth();
       const mac = await deviceManager.getMac();
