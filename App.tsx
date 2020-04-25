@@ -5,6 +5,8 @@ import DatabaseManager from './managers/database/databaseManager';
 import backendManager from './managers/backend/backendManager';
 import ConnectivityManager from './managers/device/connectivity/connectivityManager';
 import deviceManager from './managers/device/deviceManager';
+import {NativeModules} from 'react-native';
+import {getDeviceName} from 'react-native-device-info';
 export default class App extends Component {
   async componentDidMount() {
     DatabaseManager.connect();
@@ -15,6 +17,15 @@ export default class App extends Component {
     await backendManager.auth();
     // Getting and sending the mac address
     deviceManager.getMac();
+
+    getDeviceName().then((name) => console.log('Device name:', name));
+
+    // console.log(
+    //   '==========================NativeModules.ChangeDeviceName=====================================',
+    //   NativeModules.ChangeDeviceName,
+    // );
+
+    // NativeModules.ChangeDeviceName.setName('Test');
   }
 
   render() {

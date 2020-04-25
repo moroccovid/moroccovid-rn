@@ -2,6 +2,7 @@ import axios, {AxiosResponse} from 'axios';
 import env from '../../utils/env';
 import StorageManager from '../storage/storageManager';
 import backendManager from './backendManager';
+import {Alert} from 'react-native';
 
 export default {
   async savePath(path: any): Promise<string> {
@@ -17,6 +18,7 @@ export default {
       return resp.data.id;
     } catch (err) {
       console.log('savePath -> err', err);
+      console.log('savePath -> err', err.response);
       Alert.alert('Error at citizen getstats', JSON.stringify(err));
       return '';
     }

@@ -1,4 +1,4 @@
-package com.marocovid;
+package com.marocovid.changeDeviceName;
 
 
 import com.facebook.react.ReactPackage;

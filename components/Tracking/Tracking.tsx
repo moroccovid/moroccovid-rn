@@ -17,13 +17,16 @@ import Header from '../utils/Header/Header';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
-import MapView from 'react-native-maps';
 import TrajetService from '../../managers/database/services/TrajetService';
 import {Panel} from './Panel/Panel';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import TrackingManager from '../../managers/tracking/manager';
 import BackgroundTimer from 'react-native-background-timer';
-import {BleManager, Device} from 'react-native-ble-plx';
+
+import RNBluetoothClassic, {
+  BTEvents,
+  BTCharsets,
+} from 'react-native-bluetooth-classic';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -63,8 +66,8 @@ export default class Tracking extends Component<{
           `${info.coords.latitude}, ${info.coords.longitude}, acc: ${info.coords.accuracy}`,
           ToastAndroid.SHORT,
         );
+        if (!this.state.location) this.setState({location: info.coords});
         this.setState({
-          location: info.coords,
           points: [
             ...this.state.points,
             {...info.coords, timestamp: info.timestamp},
@@ -73,11 +76,6 @@ export default class Tracking extends Component<{
         });
       },
       (err: any) => {
-        console.log(
-          'Tracking -> getLocation -> err high_acc:',
-          enableHighAccuracy,
-          err,
-        );
         setTimeout(() => {
           this.getLocation(false);
         }, 2000);
@@ -88,41 +86,21 @@ export default class Tracking extends Component<{
 
   async watchLocation() {
     this.getLocation(true);
-    BackgroundTimer.runBackgroundTimer(() => {
+    RNBluetoothClassic.discoverDevices().then((devices: any[]) => {
+      console.log('Tracking -> watchLocation -> devices', devices);
+
+      devices.forEach((device) => {
+        console.log('Connecting to ' + device.address);
+        RNBluetoothClassic.connect(device.address);
+      });
+    });
+    BackgroundTimer.runBackgroundTimer(async () => {
       this.getLocation(true);
     }, 7000);
-    let bleManager = new BleManager();
-
-    bleManager.startDeviceScan(null, null, (err, device: Device | null) => {
-      if (err || !device) return;
-      let detects = this.state.detects as any[];
-
-      // Cheking if we have already detected this device
-      for (let index = 0; index < detects.length; index++)
-        if (detects[index].mac === device.id) return;
-
-      Geolocation.getCurrentPosition(
-        (info: GeolocationResponse) => {
-          detects.push({
-            mac: device.id,
-            ...info.coords,
-            timestamp: info.timestamp,
-          });
-          this.setState({detects});
-        },
-        (err: any) => {
-          console.log('Scan device -> location', err);
-        },
-        {enableHighAccuracy: false},
-      );
-    });
   }
 
   async stopTracking() {
     BackgroundTimer.stopBackgroundTimer();
-
-    let bleManager = new BleManager();
-    bleManager.stopDeviceScan();
 
     this.setState({started: false, status: 'finished'});
     let {points, detects} = this.state;
@@ -190,9 +168,6 @@ export default class Tracking extends Component<{
         );
       });
 
-    let bleManager = new BleManager();
-    const resp = await bleManager.enable();
-
     return true;
   }
 
@@ -234,7 +209,7 @@ export default class Tracking extends Component<{
           syncTrajet={async () => await this.syncTrajet()}
         />
         <View style={{flex: 5}}>
-          {this.state.location ? (
+          {/* {this.state.location ? (
             <MapView
               zoomEnabled
               initialRegion={{
@@ -245,7 +220,7 @@ export default class Tracking extends Component<{
               }}
               showsUserLocation
               style={{width: '100%', height: '100%'}}></MapView>
-          ) : null}
+          ) : null} */}
         </View>
       </View>
     );
