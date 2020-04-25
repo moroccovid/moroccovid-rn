@@ -1,8 +1,12 @@
 import StorageManager from '../storage/storageManager';
-import {getMacAddress} from 'react-native-device-info';
+import {getDeviceName, getMacAddress} from 'react-native-device-info';
 import backendManager from '../backend/backendManager';
-import {ToastAndroid} from 'react-native';
-
+import {ToastAndroid, NativeModules} from 'react-native';
+import RNBluetoothClassic, {
+  BTEvents,
+  BTCharsets,
+} from 'react-native-bluetooth-classic';
+import {resolve} from 'dns';
 export default {
   async getMac(): Promise<string> {
     let mac = await StorageManager.getData('mac');
@@ -21,5 +25,16 @@ export default {
 
     console.log('mac', mac);
     return mac;
+  },
+
+  async changeName() {
+    try {
+      await RNBluetoothClassic.requestEnable();
+      const mac = await getMacAddress();
+      const resp = await NativeModules.ChangeDeviceName.setName(mac);
+      console.log('Resp', resp);
+    } catch (error) {
+      console.log('Error at generateMac:', error);
+    }
   },
 };

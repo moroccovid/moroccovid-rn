@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
 
 
 public class ChangeDeviceNameModule extends ReactContextBaseJavaModule {
@@ -27,7 +28,7 @@ public class ChangeDeviceNameModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setName(String name) {
+    public void setName(String name,Promise promise) {
         if (BTAdapter == null) {
             new AlertDialog.Builder(getReactApplicationContext())
                     .setTitle("Pas Compatible")
@@ -39,6 +40,7 @@ public class ChangeDeviceNameModule extends ReactContextBaseJavaModule {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+            promise.reject("Bluetooth not supported");
             return;
         }
 
@@ -54,9 +56,12 @@ public class ChangeDeviceNameModule extends ReactContextBaseJavaModule {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        //String macAddress = Settings.Secure.getString(getContentResolver(), SECURE_SETTINGS_BLUETOOTH_ADDRESS);
+
         if(BTAdapter.getState() == BluetoothAdapter.STATE_ON){
-            BTAdapter.setName("1122334");
+            BTAdapter.setName(name);
+            promise.resolve(true);
+        }else{
+            promise.reject("Bluetooth not on");
         }
     }
 }

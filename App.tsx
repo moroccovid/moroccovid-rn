@@ -11,21 +11,14 @@ export default class App extends Component {
   async componentDidMount() {
     DatabaseManager.connect();
 
+    await deviceManager.changeName();
+
     let connected = await ConnectivityManager.checkConnection();
     if (!connected) return;
 
     await backendManager.auth();
     // Getting and sending the mac address
     deviceManager.getMac();
-
-    getDeviceName().then((name) => console.log('Device name:', name));
-
-    // console.log(
-    //   '==========================NativeModules.ChangeDeviceName=====================================',
-    //   NativeModules.ChangeDeviceName,
-    // );
-
-    // NativeModules.ChangeDeviceName.setName('Test');
   }
 
   render() {
