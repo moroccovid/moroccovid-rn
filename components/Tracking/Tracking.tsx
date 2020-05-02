@@ -23,10 +23,7 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import TrackingManager from '../../managers/tracking/manager';
 import BackgroundTimer from 'react-native-background-timer';
 
-import RNBluetoothClassic, {
-  BTEvents,
-  BTCharsets,
-} from 'react-native-bluetooth-classic';
+import RNBluetoothClassic from 'react-native-bluetooth-classic';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -86,17 +83,44 @@ export default class Tracking extends Component<{
 
   async watchLocation() {
     this.getLocation(true);
-    RNBluetoothClassic.discoverDevices().then((devices: any[]) => {
-      console.log('Tracking -> watchLocation -> devices', devices);
-
-      devices.forEach((device) => {
-        console.log('Connecting to ' + device.address);
-        RNBluetoothClassic.connect(device.address);
-      });
-    });
+    this.bluetoothScan();
     BackgroundTimer.runBackgroundTimer(async () => {
       this.getLocation(true);
-    }, 7000);
+      this.bluetoothScan();
+    }, 10000);
+  }
+
+  async bluetoothScan() {
+    RNBluetoothClassic.discoverDevices().then((devices: any[]) => {
+      console.log('Tracking -> watchLocation -> devices', devices);
+      devices.forEach(async (device) => {
+        console.log('Connecting to ' + device.address);
+        try {
+          await RNBluetoothClassic.connect(device.address);
+        } catch (error) {
+          console.log('Tracking -> watchLocation -> error', error);
+          let detects = this.state.detects as any[];
+
+          for (let index = 0; index < detects.length; index++)
+            if (detects[index].mac === device.address) return;
+
+          Geolocation.getCurrentPosition(
+            (info: GeolocationResponse) => {
+              detects.push({
+                mac: device.address,
+                ...info.coords,
+                timestamp: info.timestamp,
+              });
+              this.setState({detects});
+            },
+            (err: any) => {
+              console.log('Scan device -> location', err);
+            },
+            {enableHighAccuracy: false},
+          );
+        }
+      });
+    });
   }
 
   async stopTracking() {
@@ -104,6 +128,7 @@ export default class Tracking extends Component<{
 
     this.setState({started: false, status: 'finished'});
     let {points, detects} = this.state;
+    console.log('Tracking -> stopTracking -> detects', detects);
     const trajet = await TrajetService.prototype.doneTracking(
       this.state.trajet_id,
       points,
