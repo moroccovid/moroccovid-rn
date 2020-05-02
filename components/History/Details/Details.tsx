@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {Component} from 'react';
 import {Text, View, ToastAndroid, Alert, ActivityIndicator} from 'react-native';
 import {
@@ -30,10 +31,8 @@ export default class Details extends Component<{
     let id = (this.props as any).route.params.trajet_id;
     const trajet = await TrajetService.prototype.get(id);
     trajet.locations.sort((a, b) => a.timestamp - b.timestamp);
-    console.log('Details -> componentDidMount -> trajet', trajet);
     this.setState({loading: false, trajet, statsLoading: true});
     let stats = await backendManager.path.getStats(trajet.cloudID);
-    console.log('Details -> refresh -> stats', stats);
     this.setState({statsLoading: false, stats});
   };
 
@@ -42,7 +41,7 @@ export default class Details extends Component<{
     let supprimer = async () => {
       const service = new TrajetService();
       await service.delete(id);
-      await this.props.navigation.navigate('History');
+      this.props.navigation.navigate('History');
     };
     Alert.alert('Confirmation', `Voulez-vous supprimer le trajet #${id}?`, [
       {text: 'Oui', onPress: supprimer},
@@ -145,6 +144,38 @@ export default class Details extends Component<{
                   </View>
                   <Text style={{textAlign: 'center', fontSize: 20}}>
                     {this.state.stats.suspectContacts} contacts
+                  </Text>
+                </View>
+
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>
+                    Contacts distants avec des personnes infectés:
+                  </Text>
+                  <View style={styles.contactContainer}>
+                    <Citizen color={colors.success} text="Vous" />
+                    <Arrow />
+                    <Citizen color="gray" text="..." />
+                    <Arrow />
+                    <Citizen color={colors.danger} text="Infecté" />
+                  </View>
+                  <Text style={{textAlign: 'center', fontSize: 20}}>
+                    {this.state.stats.distantInfected} contacts
+                  </Text>
+                </View>
+
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>
+                    Contacts distants avec des personnes infectés:
+                  </Text>
+                  <View style={styles.contactContainer}>
+                    <Citizen color={colors.success} text="Vous" />
+                    <Arrow />
+                    <Citizen color="gray" text="..." />
+                    <Arrow />
+                    <Citizen color="orange" text="Suspect" />
+                  </View>
+                  <Text style={{textAlign: 'center', fontSize: 20}}>
+                    {this.state.stats.distantSuspected} contacts
                   </Text>
                 </View>
               </ScrollView>

@@ -42,12 +42,22 @@ export default {
           env.api_url + 'getCountDirectSuspectContactsByPath/' + cloudID,
           options,
         ),
+        axios.get(
+          env.api_url + 'getDistanceInfectedContactsByPath/' + cloudID,
+          options,
+        ),
+        axios.get(
+          env.api_url + 'getDistanceSuspectedContactsByPath/' + cloudID,
+          options,
+        ),
       ]);
 
       return {
         totalContacts: respones[0].data.count,
         infectedContacts: respones[1].data.count,
         suspectContacts: respones[2].data.count,
+        distantInfected: respones[3].data.count,
+        distantSuspected: respones[4].data.count,
       };
     } catch (err) {
       console.log('savePath -> err', err);
