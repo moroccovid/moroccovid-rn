@@ -24,6 +24,7 @@ import TrackingManager from '../../managers/tracking/manager';
 import BackgroundTimer from 'react-native-background-timer';
 
 import RNBluetoothClassic from 'react-native-bluetooth-classic';
+import deviceManager from '../..managers/device/deviceManager';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -97,30 +98,38 @@ export default class Tracking extends Component<{
         console.log('Connecting to ' + device.address);
         try {
           await RNBluetoothClassic.connect(device.address);
+          const mac = await deviceManager.getMac();
+          await RNBluetoothClassic.write(mac);
+          const msg = RNBluetoothClassic.readFromDevice();
+          this.addDetect(msg);
         } catch (error) {
           console.log('Tracking -> watchLocation -> error', error);
-          let detects = this.state.detects as any[];
-
-          for (let index = 0; index < detects.length; index++)
-            if (detects[index].mac === device.address) return;
-
-          Geolocation.getCurrentPosition(
-            (info: GeolocationResponse) => {
-              detects.push({
-                mac: device.address,
-                ...info.coords,
-                timestamp: info.timestamp,
-              });
-              this.setState({detects});
-            },
-            (err: any) => {
-              console.log('Scan device -> location', err);
-            },
-            {enableHighAccuracy: false},
-          );
+          this.addDetect(device.address);
         }
       });
     });
+  }
+
+  addDetect(address: string) {
+    let detects = this.state.detects as any[];
+
+    for (let index = 0; index < detects.length; index++)
+      if (detects[index].mac === address) return;
+
+    Geolocation.getCurrentPosition(
+      (info: GeolocationResponse) => {
+        detects.push({
+          mac: address,
+          ...info.coords,
+          timestamp: info.timestamp,
+        });
+        this.setState({detects});
+      },
+      (err: any) => {
+        console.log('Scan device -> location', err);
+      },
+      {enableHighAccuracy: false},
+    );
   }
 
   async stopTracking() {
