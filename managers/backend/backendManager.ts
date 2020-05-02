@@ -5,7 +5,6 @@ import tokenUtils from './tokenUtils';
 import citizen from './citizen';
 import path from './path';
 import survey from './survey';
-import {Alert} from 'react-native';
 
 export default {
   citizen,
@@ -25,7 +24,6 @@ export default {
         username: 'covidmaroc',
         password: 'covidmaroc2019',
       });
-      console.log('auth -> resp.data', resp.data);
       if (!resp.data.access_token) return null;
       StorageManager.saveItem('token', resp.data.access_token);
       return resp.data.access_token;

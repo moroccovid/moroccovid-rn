@@ -37,7 +37,6 @@ export default class Welcome extends Component<{
 
   async checkNumber() {
     const number = await storageManager.getData('number');
-    console.log('Welcome -> checkNumber -> number', number);
     if (!number) return this.setState({showOverlay: true});
     this.setState({number});
   }

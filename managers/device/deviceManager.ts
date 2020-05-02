@@ -23,7 +23,6 @@ export default {
       await saveCitizen(mac);
     } else if (mac && !macSynced) await saveCitizen(mac);
 
-    console.log('mac', mac);
     return mac;
   },
 
