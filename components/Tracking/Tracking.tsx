@@ -24,7 +24,7 @@ import TrackingManager from '../../managers/tracking/manager';
 import BackgroundTimer from 'react-native-background-timer';
 
 import RNBluetoothClassic from 'react-native-bluetooth-classic';
-import deviceManager from '../..managers/device/deviceManager';
+import deviceManager from '../../managers/device/deviceManager';
 
 export default class Tracking extends Component<{
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -95,9 +95,10 @@ export default class Tracking extends Component<{
     RNBluetoothClassic.discoverDevices().then((devices: any[]) => {
       console.log('Tracking -> watchLocation -> devices', devices);
       devices.forEach(async (device) => {
-        console.log('Connecting to ' + device.address);
         try {
-          await RNBluetoothClassic.connect(device.address);
+          console.log('Connecting to ' + device.id);
+          await RNBluetoothClassic.connect(device.id); //  this crashes
+          console.log('Connected to ' + device.id);
           const mac = await deviceManager.getMac();
           await RNBluetoothClassic.write(mac);
           const msg = RNBluetoothClassic.readFromDevice();
